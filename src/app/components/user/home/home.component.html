@@ -1,0 +1,14 @@
+
+  
+  @if ((profile$ | async)?.name == null || (profile$ | async)?.name == "") {
+    <app-user-content [profile$]="profile$" [boleeanProfile$]="boleeanProfile$"></app-user-content>
+  } 
+  @else {
+
+<main class="dashboard">
+<app-feature-cards-component></app-feature-cards-component>
+</main>
+    
+  }
+
+

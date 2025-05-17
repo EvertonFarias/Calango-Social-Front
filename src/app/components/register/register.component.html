@@ -1,0 +1,29 @@
+<section class="section-main">
+  <div class="form-container">
+    <div id="title">
+      <h2>Crie sua conta</h2>
+    </div>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      <input formControlName="login" type="text" placeholder="Nome de usuário" required>
+
+      <label for="dateOfBirth">Data de nascimento</label>
+      <input formControlName="dateOfBirth" type="date" id="dateOfBirth" required>
+
+      <label for="gender">Gênero</label>
+      <select formControlName="gender" id="gender" required>
+        <option value="" disabled selected>Selecione</option>
+        <option value="male">Masculino</option>
+        <option value="female">Feminino</option>
+        <option value="other">Outro</option>
+      </select>
+
+      <input formControlName="email" type="email" placeholder="example@example.com" required>
+      <input formControlName="password" type="password" placeholder="Senha" required>
+      <input formControlName="confirmPassword" type="password" placeholder="Confirme sua Senha" required>
+
+      <button type="submit" class="btn" [disabled]="registerForm.invalid">Registrar</button>
+    </form>
+    <p>Já tem uma conta? <a class="text-link" routerLink="/auth/login">Iniciar sessão</a></p>
+  </div>
+</section>

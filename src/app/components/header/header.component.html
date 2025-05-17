@@ -1,0 +1,6 @@
+<header>
+  <h2><a [routerLink] ="authenticated ? 'user/home' :  '/'">CalangoSocial</a></h2>
+    <app-auth-buttons *ngIf="!authenticated">  </app-auth-buttons>
+    <app-user-info *ngIf="authenticated" [logout]="logout.bind(this)"></app-user-info>
+</header>
+

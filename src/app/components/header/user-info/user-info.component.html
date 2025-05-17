@@ -1,0 +1,13 @@
+<div class="user-info-container"
+     (mouseenter)="isMenuOpen = true"
+     (mouseleave)="isMenuOpen = false">
+  <div class="user-icon">
+    <i class="fa-solid fa-user"></i>
+  </div>
+
+  <div class="dropdown-menu" *ngIf="isMenuOpen">
+      <button class="btn-dropdown">Ver Perfil</button>
+      <button class="btn-dropdown">Configurações</button>
+      <button class="logout-button btn-basic" (click)="logout()">Sair</button> 
+  </div>
+</div>

@@ -1,0 +1,66 @@
+
+header {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    max-height: 35px;
+    margin: auto;
+
+    
+  }
+  header h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, #2F80ED, #1d5bb0);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+
+
+
+  nav a {
+    position: relative;
+    margin: 0 1rem;
+    text-decoration: none;
+    color: #1F2937;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.25rem 0;
+    transition: color 0.3s ease;
+  }
+  
+  nav a::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: #2F80ED;
+    transition: width 0.3s ease;
+  }
+  
+  nav a:hover {
+    color: #2F80ED;
+  }
+  
+  nav a:hover::after {
+    width: 100%;
+  }
+  
+  .auth-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+
+  

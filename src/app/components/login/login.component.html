@@ -1,0 +1,14 @@
+<section class="section-main">
+  <div class="logo-container">
+    <img src="img/calango-celular.png" alt="logo">
+  </div>
+  <div class="form-container">
+    <h2>Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <input  formControlName="login" type="text" placeholder="Seu email" required>
+      <input formControlName="password" type="password" placeholder="Sua senha" required>
+      <button type="submit" class="btn" [disabled]="loginForm.invalid">Entrar</button>
+    </form>
+    <p>Não possui uma conta? <a class="text-link" routerLink="/auth/register">Registre-se</a></p>
+  </div>
+</section>

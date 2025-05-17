@@ -1,0 +1,22 @@
+
+footer {
+    background-color: #005caa;
+    color: white;
+    max-height: 70px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    
+}
+footer p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: underline;
+}
