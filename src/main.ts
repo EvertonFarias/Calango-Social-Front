@@ -12,6 +12,8 @@ import { AuthRedirectGuard } from './app/guards/AuthRedirectGuard ';
 import { AuthGuard } from './app/guards/Auth.guard';
 import { RoleGuard } from './app/guards/Role.guard';
 import { HomeComponent } from './app/components/user/home/home.component';
+import { ForgotPasswordComponent } from './app/components/auth/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './app/components/auth/reset-password/reset-password.component';
 
 
 const routes = [
@@ -28,6 +30,16 @@ const routes = [
   { 
     path: 'auth/login', 
     component: LoginComponent, 
+    canActivate: [AuthRedirectGuard] 
+  },
+  { 
+    path: 'auth/forgot-password', 
+    component: ForgotPasswordComponent, 
+    canActivate: [AuthRedirectGuard] 
+  },
+  { 
+    path: 'auth/reset-password', 
+    component: ResetPasswordComponent, 
     canActivate: [AuthRedirectGuard] 
   },
   { 

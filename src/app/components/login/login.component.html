@@ -9,6 +9,7 @@
       <input formControlName="password" type="password" placeholder="Sua senha" required>
       <button type="submit" class="btn" [disabled]="loginForm.invalid">Entrar</button>
     </form>
+    <p><a class="text-link" routerLink="/auth/forgot-password">Esqueceu a senha?</a></p>
     <p>Não possui uma conta? <a class="text-link" routerLink="/auth/register">Registre-se</a></p>
   </div>
 </section>

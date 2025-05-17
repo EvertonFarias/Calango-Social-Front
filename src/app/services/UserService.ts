@@ -28,27 +28,33 @@ export class UserService {
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   loadUser() {
-    const userId = this.authService.getUserId();
-    const token = this.authService.getToken();  
+  const isAuthenticated = this.authService.isLoggedIn?.() ?? !!this.authService.getToken();
+  const userId = this.authService.getUserId();
+  const token = this.authService.getToken();
 
-    if (userId && token) {
-      this.http.get<UserDTO>(`${environment.apiUrl}/users/${userId}`, { 
-        headers: {
-          Authorization: `Bearer ${token}`  
-        }
-      }).subscribe({
-        next: (user) => {
-          this.userSubject.next(user);
-          this.isUserVerifiedSubject.next(user.verifiedEmail);
-        },
-        error: (err) => {
-          console.error('Erro ao carregar dados do usuário:', err);
-          this.userSubject.next(null);
-          this.isUserVerifiedSubject.next(false); 
-        }
-      });
-    }
+  if (!isAuthenticated || !userId || !token) {
+    // Não está autenticado, garantir estado limpo
+    this.userSubject.next(null);
+    this.isUserVerifiedSubject.next(false);
+    return;
   }
+
+  this.http.get<UserDTO>(`${environment.apiUrl}/users/${userId}`, { 
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }).subscribe({
+    next: (user) => {
+      this.userSubject.next(user);
+      this.isUserVerifiedSubject.next(user.verifiedEmail);
+    },
+    error: (err) => {
+      console.error('Erro ao carregar dados do usuário:', err);
+      this.userSubject.next(null);
+      this.isUserVerifiedSubject.next(false);
+    }
+  });
+}
 
   getCurrentUser(): UserDTO | null {
     return this.userSubject.getValue();
