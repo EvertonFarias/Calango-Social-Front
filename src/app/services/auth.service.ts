@@ -42,6 +42,15 @@ export class AuthService {
     const payload = this.decodeToken(token);
     return payload?.role || null;
   }
+
+    getUserId(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    const payload = this.decodeToken(token);
+    return payload?.id || null;
+  }
+  
   getUsername(): string | null {
     const token = this.getToken();
     if (!token) return null;

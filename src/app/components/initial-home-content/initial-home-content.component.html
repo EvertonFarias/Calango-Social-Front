@@ -3,12 +3,13 @@
     <img src="img/calango-celular.png" alt="Calango img" width="450">
   </div>
     <div class="hero-text">
-      <h1>CalangoSocial</h1>
-      <p>Encontre, agende e crie avaliações com facilidade, conectando educadores e alunos em nossa plataforma intuitiva.</p>
-      <a class="btn bnt" [routerLink]="authenticated ? 'user/create-evaluation' : 'auth/login'">
-        Criar Avaliação
+
+        <h1>CalangoSocial</h1>
+        <p>Uma rede social divertida e intuitiva onde você pode fazer novas amizades, criar postagens, curtir e comentar — tudo em um só lugar.</p>
+
+      <a class="btn" [routerLink]="authenticated ? 'user/home' : 'auth/register'">
+        Junte-se agora
       </a>
-      
     </div>
   </section>
 

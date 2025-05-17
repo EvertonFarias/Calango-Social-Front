@@ -1,7 +1,4 @@
 
-@tailwind components;
-@tailwind utilities;
-
 * {
     border: 0;
     padding: 0;
@@ -13,6 +10,14 @@
     background-color: #F9FAFB;
     color: #1F2937;
 
+  }
+  main {
+      padding-top: 100px;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+ 
   }
 
   .text-link{

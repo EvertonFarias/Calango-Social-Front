@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ProfileDTO, ProfileService } from '../../../services/ProfileService';
+import { UserDTO, UserService } from '../../../services/UserService';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
@@ -12,15 +12,15 @@ import { CommonModule } from '@angular/common';
 })
 export class UserInfoComponent {
   @Input() logout!: () => void;
-  profile$: Observable<ProfileDTO | null>;
+  user$: Observable<UserDTO | null>;
   isMenuOpen = false; // controla se o menu está visível
 
 
   constructor(
-    private profileService: ProfileService,
+    private userService: UserService,
     
   ) {
-    this.profile$ = this.profileService.profile$;
+    this.user$ = this.userService.user$;
    }
 
    toggleMenu(): void {

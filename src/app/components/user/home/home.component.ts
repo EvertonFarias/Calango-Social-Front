@@ -2,24 +2,25 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { Observable } from 'rxjs';
-import { ProfileDTO, ProfileService } from '../../../services/ProfileService';
-import { UserContentComponent } from "./user-content/user-content.component";
+
 import { RouterModule } from '@angular/router';
-import { FeatureCardsComponentComponent } from "../../feature-cards-component/feature-cards-component.component";
+import { UserDTO, UserService } from '../../../services/UserService';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, UserContentComponent, RouterModule, FeatureCardsComponentComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  profile$: Observable<ProfileDTO | null>;
-  boleeanProfile$: Observable<boolean>;
+  user$: Observable<UserDTO | null>;
+  isUserVerified$: Observable<boolean>;
 
-  constructor(private profileService: ProfileService) {
-    this.profile$ = this.profileService.profile$;
-    this.boleeanProfile$ = this.profileService.boleeanProfile$;
+  constructor(private userService: UserService) {
+    this.user$ = this.userService.user$;
+    this.isUserVerified$ = this.userService.isUserVerified$;
+    console.log(this.isUserVerified$);
   }
+  
 }

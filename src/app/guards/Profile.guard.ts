@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { ProfileService } from '../services/ProfileService';
+import { ProfileService } from '../services/UserService';
 import { AuthService } from '../services/auth.service';
 import { map, filter, take } from 'rxjs';
 import Swal from 'sweetalert2'; 

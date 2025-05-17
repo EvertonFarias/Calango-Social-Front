@@ -6,7 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
 import { environment } from '../../app.config';
-import { ProfileService } from '../../services/ProfileService';
+import { UserService } from '../../services/UserService';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +23,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private http: HttpClient,
     private authService: AuthService,
-    private profileService: ProfileService,
+    private profileService: UserService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
@@ -59,7 +59,7 @@ export class LoginComponent {
         next: (response) => {
           const token = response.token;
           this.authService.login(token);
-          this.profileService.loadUserProfile();
+          this.profileService.loadUser();
           this.router.navigate(['user/home']);
           console.log(this.authService.getUserRole(), this.authService.getUsername());
           

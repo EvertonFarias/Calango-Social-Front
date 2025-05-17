@@ -2,7 +2,7 @@ import { Component, Input} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "./components/header/header.component";
 import { FooterComponent } from "./components/footer/footer.component";
-import { ProfileService } from './services/ProfileService';
+import { UserService } from './services/UserService';
 
 
 
@@ -13,10 +13,10 @@ import { ProfileService } from './services/ProfileService';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  constructor(private profileService: ProfileService) {}
+  constructor(private userService: UserService) {}
 
   ngOnInit() {
-    this.profileService.loadUserProfile();
+    this.userService.loadUser();
   }
   title = 'InovaTest-Front';
   authenticated: boolean = false;

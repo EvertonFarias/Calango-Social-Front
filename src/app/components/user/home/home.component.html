@@ -1,14 +1,7 @@
+<h1 *ngIf="isUserVerified$ | async; else notVerified">
+  E-mail verificado
+</h1>
 
-  
-  @if ((profile$ | async)?.name == null || (profile$ | async)?.name == "") {
-    <app-user-content [profile$]="profile$" [boleeanProfile$]="boleeanProfile$"></app-user-content>
-  } 
-  @else {
-
-<main class="dashboard">
-<app-feature-cards-component></app-feature-cards-component>
-</main>
-    
-  }
-
-
+<ng-template #notVerified>
+  <h1>E-mail não verificado</h1>
+</ng-template>

@@ -5,7 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { UserInfoComponent } from "./user-info/user-info.component";
 import { AuthButtonsComponent } from "./auth-buttons/auth-buttons.component";
-import { ProfileDTO, ProfileService } from '../../services/ProfileService';
+import { UserDTO, UserService } from '../../services/UserService';
 
 @Component({
   selector: 'app-header',
@@ -16,16 +16,16 @@ import { ProfileDTO, ProfileService } from '../../services/ProfileService';
 export class HeaderComponent implements OnInit, OnDestroy {
   authenticated: boolean = false;
   private authSubscription!: Subscription;
-  profile$: Observable<ProfileDTO | null>;
+  user$: Observable<UserDTO | null>;
 
   constructor(
-    private profileService: ProfileService,
+    private userService: UserService,
     private authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef,
     
   ) {
-    this.profile$ = this.profileService.profile$;
+    this.user$ = this.userService.user$;
    }
 
   ngOnInit(): void {
