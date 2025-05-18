@@ -1,2 +1,23 @@
+/* Sidebar fixa no canto esquerdo */
+app-auth-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  z-index: 1000;
+}
+
+.main-content {
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+} 
+.main-wrapper.shifted {
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+    margin-left: 260px; 
+}
 
 

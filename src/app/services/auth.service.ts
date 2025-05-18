@@ -1,26 +1,46 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class AuthService {
-  private authSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
-  authStatus$ = this.authSubject.asObservable();
+  private authSubject = new BehaviorSubject<boolean>(this.hasValidToken());
+  
+  // Observable público para o status de autenticação
+  readonly authStatus$ = this.authSubject.asObservable();
+  
+  // Alias para compatibilidade com outros componentes que usam isLoggedIn$
+  readonly isLoggedIn$ = this.authStatus$;
 
-  constructor() { }
+  constructor() {
+    // Verifica o token ao iniciar o serviço
+    this.checkTokenValidity();
+  }
+
+  // Verifica se há um token válido e atualiza o BehaviorSubject
+  private checkTokenValidity(): void {
+    const isLoggedIn = this.hasValidToken();
+    this.authSubject.next(isLoggedIn);
+  }
+
+  // Verifica se existe um token válido
+  private hasValidToken(): boolean {
+    const token = this.getToken();
+    return !!token && !this.isTokenExpired(token);
+  }
 
   // Realiza o login, armazenando o token no localStorage
-  login(token: string) {
+  login(token: string): void {
     localStorage.setItem('token', token);
-    this.authSubject.next(true); // <-- Atualiza o status para autenticado
+    this.authSubject.next(true); // Atualiza o status para autenticado
   }
 
   // Realiza o logout, removendo o token do localStorage
-  logout() {
+  logout(): void {
     localStorage.removeItem('token');
-    this.authSubject.next(false); // <-- Atualiza o status para não autenticado
+    this.authSubject.next(false); // Atualiza o status para não autenticado
   }
 
   // Retorna o token armazenado no localStorage
@@ -30,7 +50,11 @@ export class AuthService {
 
   // Verifica se o usuário está logado (token não expirado)
   isLoggedIn(): boolean {
-    const token = this.getToken();
+    return this.hasValidToken();
+  }
+
+  // Verifica se o token é válido - método público para uso externo
+  isTokenValid(token: string): boolean {
     return !!token && !this.isTokenExpired(token);
   }
 
@@ -43,20 +67,22 @@ export class AuthService {
     return payload?.role || null;
   }
 
-    getUserId(): string | null {
+  // Obtém o ID do usuário a partir do payload do token
+  getUserId(): string | null {
     const token = this.getToken();
     if (!token) return null;
 
     const payload = this.decodeToken(token);
-    return payload?.id || null;
+    return payload?.id || payload?.sub || null;
   }
   
+  // Obtém o nome de usuário a partir do payload do token
   getUsername(): string | null {
     const token = this.getToken();
     if (!token) return null;
   
     const payload = this.decodeToken(token);
-    return payload?.sub || null; 
+    return payload?.sub || payload?.preferred_username || null; 
   }
   
   // Decodifica o payload do JWT sem validar sua assinatura
@@ -65,6 +91,7 @@ export class AuthService {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload;
     } catch (error) {
+      console.error('Erro ao decodificar token:', error);
       return null;
     }
   }

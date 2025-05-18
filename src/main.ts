@@ -14,6 +14,7 @@ import { RoleGuard } from './app/guards/Role.guard';
 import { HomeComponent } from './app/components/user/home/home.component';
 import { ForgotPasswordComponent } from './app/components/auth/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './app/components/auth/reset-password/reset-password.component';
+import { EmailVerifiedGuard } from './app/guards/EmailVerifiedGuard';
 
 
 const routes = [
@@ -45,7 +46,7 @@ const routes = [
   { 
     path: 'admin', 
     loadComponent: () => import('./app/components/admin/admin.component').then(m => m.AdminComponent),
-    canActivate: [AuthGuard, RoleGuard],
+    canActivate: [AuthGuard, RoleGuard, EmailVerifiedGuard],
     data: { expectedRoles: ['ADMIN'] }
   },
   
@@ -59,7 +60,7 @@ const routes = [
 
 ,
   { path: 'unauthorized', component: UnauthorizedComponent },
-  { path: '**', component: NotFoundComponent },
+  { path: '**', component: NotFoundComponent, canActivate:[EmailVerifiedGuard]},
 ];
 
 bootstrapApplication(AppComponent, {
