@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
+import { environment } from '../../../environment';
 
 @Component({
   selector: 'app-register',
@@ -50,7 +51,7 @@ export class RegisterComponent {
 
     const payload = { login, email, password, dateOfBirth, gender };
 
-    this.http.post('http://localhost:8080/auth/register', payload)
+    this.http.post(`${environment.apiUrl}/auth/register`, payload)
       .subscribe({
         next: () => {
           Swal.fire({

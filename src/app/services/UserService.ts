@@ -3,8 +3,8 @@ import { BehaviorSubject, Observable, Subscription, timer } from 'rxjs';
 import { switchMap, catchError, tap, shareReplay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
-import { environment } from '../app.config';
 import { map, filter } from 'rxjs/operators';
+import { environment } from '../../environment';
 
 export interface UserDTO {
   id: string;

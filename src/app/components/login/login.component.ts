@@ -5,8 +5,9 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
-import { environment } from '../../app.config';
+
 import { UserService } from '../../services/UserService';
+import { environment } from '../../../environment';
 
 @Component({
   selector: 'app-login',

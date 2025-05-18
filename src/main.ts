@@ -15,6 +15,11 @@ import { HomeComponent } from './app/components/user/home/home.component';
 import { ForgotPasswordComponent } from './app/components/auth/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './app/components/auth/reset-password/reset-password.component';
 import { EmailVerifiedGuard } from './app/guards/EmailVerifiedGuard';
+import { createComponent } from '@angular/core';
+import { CreatePostComponent } from './app/components/user/create-post-component/create-post-component.component';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+import { environment } from './environment';
 
 
 const routes = [
@@ -56,6 +61,11 @@ const routes = [
     path: 'user/home',
     component: HomeComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'user/create-post',
+    component: CreatePostComponent,
+    canActivate: [AuthGuard]
   }
 
 ,
@@ -67,6 +77,8 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
     provideHttpClient(),
-    CommonModule 
+    CommonModule ,
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideStorage(() => getStorage())
   ]
-});
+}).catch((err) => console.error(err));
