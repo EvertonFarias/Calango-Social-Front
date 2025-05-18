@@ -1,0 +1,32 @@
+<div class="feed-container" *ngIf="!isLoading; else loading">
+  <div *ngFor="let post of posts" class="post-card">
+    <div class="post-header">
+      <img [src]="post.profilePicture || 'img/calangos/default.png'" alt="Avatar" class="avatar" (click)="navigateToProfile(post.userId)">
+      <div>
+        <strong (click)="navigateToProfile(post.userId)">{{ post.username }}</strong>
+        <div class="timestamp">{{ post.createdAt | date: 'short' }}</div>
+      </div>
+    </div>
+
+    <div class="post-content">
+      <p>{{ post.content }}</p>
+      <img *ngIf="post.imageUrl" [src]="post.imageUrl" class="post-media" alt="Post Image">
+      <div *ngIf="post.videoUrl" class="video-container">
+        <video width="100%" controls [poster]="post.thumbnailUrl" playsinline>
+        <source [src]="post.videoUrl" type="video/mp4">
+        Seu navegador não suporta vídeo.
+        </video>
+
+      </div>
+    </div>
+
+    <div class="post-actions">
+      ❤️ {{ post.likesCount }} &nbsp; 💬 {{ post.commentsCount }}
+      <button (click)="navigateToPost(post.id)">Ver mais</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading">Carregando feed...</div>
+</ng-template>

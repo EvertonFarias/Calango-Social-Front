@@ -7,6 +7,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { FileUploadService } from '../../../services/FileUploadService';
 import { PostRequestDto, PostService } from '../../../services/PostService';
+import { UserService } from '../../../services/UserService';
 
 @Component({
   selector: 'app-create-post-component',
@@ -23,14 +24,13 @@ export class CreatePostComponent implements OnInit {
   videoPreview: string | null = null;
   isUploading = false;
   uploadProgress = 0;
-  
-
-  userId = '4d589306-bc2b-4ac0-b30e-7be611be6614';
+  userId: string = '';
 
   constructor(
     private fb: FormBuilder,
     private fileUploadService: FileUploadService,
-    private postService: PostService
+    private postService: PostService,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
@@ -39,7 +39,16 @@ export class CreatePostComponent implements OnInit {
       imageUrl: [null],
       videoUrl: [null]
     });
+
+    const user = this.userService.getCurrentUser();
+    if (user) {
+      this.userId = user.id;
+    } else {
+      console.warn('Usuário não encontrado ou ainda não carregado');
+    }
+
   }
+
 
   onImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;

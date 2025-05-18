@@ -5,7 +5,7 @@ import { switchMap, of, catchError } from 'rxjs';
 import { UserDTO, UserService } from '../../../services/UserService';
 import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../environment';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 interface Post {
   id: string;
@@ -14,6 +14,7 @@ interface Post {
   content: string;
   imageUrl: string | null;
   videoUrl: string | null;
+  thumbnailUrl?: string | null; // Para thumbnails de vídeos
   createdAt: string;
   profilePicture: string | null;
 }
@@ -28,6 +29,8 @@ interface Post {
 export class UserProfileComponent implements OnInit {
   user: UserDTO | null = null;
   posts: Post[] = [];
+  followers: number = 0;
+  following: number = 0;
 
   isModalOpen = false;
   calangoImages: string[] = [];
@@ -36,26 +39,25 @@ export class UserProfileComponent implements OnInit {
   constructor(
     private userService: UserService,
     private authService: AuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.calangoImages = Array.from({ length: 10 }, (_, i) => `img/calangos/calango-${i + 1}.png`);
 
     this.userService.user$
-    
       .pipe(
         switchMap(user => {
           if (user && this.authService.isLoggedIn()) {
             this.user = user;
 
-      console.log('Perfil:', user.profilePicture);
+            this.selectedProfileImage = (typeof user.profilePicture === 'string' && user.profilePicture.trim() !== '')
+              ? user.profilePicture
+              : 'img/calangos/default.png';
 
-      this.selectedProfileImage = (typeof user.profilePicture === 'string' && user.profilePicture.trim() !== '')
-        ? user.profilePicture
-        : 'img/calangos/default.png';
-
-
+            // Carregar contagem de seguidores e seguindo (simulados por enquanto)
+            this.loadFollowStats(user.id);
 
             const token = this.authService.getToken();
             const headers = new HttpHeaders({
@@ -77,8 +79,38 @@ export class UserProfileComponent implements OnInit {
         })
       )
       .subscribe(posts => {
-        this.posts = posts;
+        // Adicionar thumbnails para vídeos se não existirem
+        this.posts = posts.map(post => {
+          if (post.videoUrl && !post.thumbnailUrl) {
+            // Se não tiver thumbnail, usa uma imagem padrão
+            post.thumbnailUrl = 'assets/video-thumbnail-placeholder.jpg';
+          }
+          return post;
+        });
       });
+  }
+
+  // Simula o carregamento de estatísticas de seguidores (em uma aplicação real, isso viria da API)
+  loadFollowStats(userId: string): void {
+    // Valores simulados para exemplo
+    this.followers = Math.floor(Math.random() * 1000);
+    this.following = Math.floor(Math.random() * 500);
+    
+    // Em uma implementação real, você faria uma chamada à API
+    // this.http.get(`${environment.apiUrl}/api/users/${userId}/followers/count`)
+    //   .subscribe((data: any) => {
+    //     this.followers = data.count;
+    //   });
+    
+    // this.http.get(`${environment.apiUrl}/api/users/${userId}/following/count`)
+    //   .subscribe((data: any) => {
+    //     this.following = data.count;
+    //   });
+  }
+
+  // Navega para a página do post completo
+  navigateToFullPost(postId: string): void {
+    this.router.navigate(['/post', postId]);
   }
 
   openModal(): void {
@@ -88,6 +120,7 @@ export class UserProfileComponent implements OnInit {
   closeModal(): void {
     this.isModalOpen = false;
   }
+  
 
   selectImage(imagePath: string): void {
     if (!imagePath || imagePath.trim() === '') {

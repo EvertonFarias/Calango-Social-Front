@@ -5,11 +5,12 @@ import { Observable } from 'rxjs';
 
 import { RouterModule } from '@angular/router';
 import { UserDTO, UserService } from '../../../services/UserService';
+import { FeedComponent } from '../feed/feed.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FeedComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

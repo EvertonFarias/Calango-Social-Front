@@ -23,6 +23,8 @@ import { environment } from './environment';
 import { UserProfileComponent } from './app/components/user/user-profile/user-profile.component';
 
 
+
+
 const routes = [
 
   { path: '', 
@@ -66,15 +68,13 @@ const routes = [
   {
     path: 'user/create-post',
     component: CreatePostComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard,EmailVerifiedGuard]
   },
   {
     path: 'user/profile',
     component: UserProfileComponent,
-    canActivate: [AuthGuard]
-  }
-
-,
+    canActivate: [AuthGuard, EmailVerifiedGuard]
+  },
   { path: 'unauthorized', component: UnauthorizedComponent },
   { path: '**', component: NotFoundComponent, canActivate:[EmailVerifiedGuard]},
 ];
