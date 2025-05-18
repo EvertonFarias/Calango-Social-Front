@@ -20,6 +20,7 @@ import { CreatePostComponent } from './app/components/user/create-post-component
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { environment } from './environment';
+import { UserProfileComponent } from './app/components/user/user-profile/user-profile.component';
 
 
 const routes = [
@@ -65,6 +66,11 @@ const routes = [
   {
     path: 'user/create-post',
     component: CreatePostComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'user/profile',
+    component: UserProfileComponent,
     canActivate: [AuthGuard]
   }
 

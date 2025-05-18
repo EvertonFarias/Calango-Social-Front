@@ -7,6 +7,7 @@ import { map, filter } from 'rxjs/operators';
 import { environment } from '../../environment';
 
 export interface UserDTO {
+  profilePicture: string | null;
   id: string;
   login: string;
   email: string;

@@ -1,66 +1,68 @@
-<div class="create-post-container">
-  <h2><mat-icon>edit</mat-icon> Criar Novo Post</h2>
-  
-  <form [formGroup]="postForm" (ngSubmit)="submitPost()" class="post-form">
-    <div class="form-group">
-      <textarea 
-        formControlName="content" 
-        placeholder="O que você está pensando?" 
-        rows="4" 
-        class="form-control"></textarea>
-      <div *ngIf="postForm.get('content')?.invalid && postForm.get('content')?.touched" class="error-message">
-        <mat-icon color="warn" style="vertical-align: middle;">error</mat-icon> Conteúdo é obrigatório
-      </div>
-    </div>
+<section>
+    <div class="create-post-container">
+      <h2><mat-icon>edit</mat-icon> Criar Novo Post</h2>
     
-    <div class="media-preview-container">
-      <!-- Imagem Preview -->
-      <div *ngIf="imagePreview" class="media-preview">
-        <img [src]="imagePreview" alt="Preview da imagem" class="preview-image">
-        <button type="button" (click)="selectedImage = null; imagePreview = null" class="remove-btn">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-      
-      <!-- Vídeo Preview -->
-      <div *ngIf="videoPreview" class="media-preview">
-        <video [src]="videoPreview" controls class="preview-video"></video>
-        <button type="button" (click)="selectedVideo = null; videoPreview = null" class="remove-btn">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-    </div>
-    
-    <div class="media-buttons">
-      <div class="upload-btn-wrapper">
-        <button type="button" class="btn media-btn">
-          <mat-icon>photo_camera</mat-icon> Foto
-        </button>
-        <input type="file" accept="image/*" (change)="onImageSelected($event)" [disabled]="isUploading">
-      </div>
-      
-      <div class="upload-btn-wrapper">
-        <button type="button" class="btn media-btn">
-          <mat-icon>videocam</mat-icon> Vídeo
-        </button>
-        <input type="file" accept="video/*" (change)="onVideoSelected($event)" [disabled]="isUploading">
-      </div>
-    </div>
-    
-    <div class="submit-container">
-      <button 
-        type="submit" 
-        class="btn submit-btn" 
-        [disabled]="postForm.invalid || isUploading">
-        <mat-icon>send</mat-icon> {{ isUploading ? 'Enviando...' : 'Publicar' }}
-      </button>
-      
-      <div *ngIf="isUploading" class="upload-progress">
-        <div class="progress-bar">
-          <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+      <form [formGroup]="postForm" (ngSubmit)="submitPost()" class="post-form">
+        <div class="form-group">
+          <textarea
+            formControlName="content"
+            placeholder="O que você está pensando?"
+            rows="4"
+            class="form-control"></textarea>
+          <div *ngIf="postForm.get('content')?.invalid && postForm.get('content')?.touched" class="error-message">
+            <mat-icon color="warn" style="vertical-align: middle;">error</mat-icon> Conteúdo é obrigatório
+          </div>
         </div>
-        <span>{{ uploadProgress }}%</span>
-      </div>
+    
+        <div class="media-preview-container">
+          <!-- Imagem Preview -->
+          <div *ngIf="imagePreview" class="media-preview">
+            <img [src]="imagePreview" alt="Preview da imagem" class="preview-image">
+            <button type="button" (click)="selectedImage = null; imagePreview = null" class="remove-btn">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+    
+          <!-- Vídeo Preview -->
+          <div *ngIf="videoPreview" class="media-preview">
+            <video [src]="videoPreview" controls class="preview-video"></video>
+            <button type="button" (click)="selectedVideo = null; videoPreview = null" class="remove-btn">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+    
+        <div class="media-buttons">
+          <div class="upload-btn-wrapper">
+            <button type="button" class="btn media-btn">
+              <mat-icon>photo_camera</mat-icon> Foto
+            </button>
+            <input type="file" accept="image/*" (change)="onImageSelected($event)" [disabled]="isUploading">
+          </div>
+    
+          <div class="upload-btn-wrapper">
+            <button type="button" class="btn media-btn">
+              <mat-icon>videocam</mat-icon> Vídeo
+            </button>
+            <input type="file" accept="video/*" (change)="onVideoSelected($event)" [disabled]="isUploading">
+          </div>
+        </div>
+    
+        <div class="submit-container">
+          <button
+            type="submit"
+            class="btn submit-btn"
+            [disabled]="postForm.invalid || isUploading">
+            <mat-icon>send</mat-icon> {{ isUploading ? 'Enviando...' : 'Publicar' }}
+          </button>
+    
+          <div *ngIf="isUploading" class="upload-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+            </div>
+            <span>{{ uploadProgress }}%</span>
+          </div>
+        </div>
+      </form>
     </div>
-  </form>
-</div>
+</section>

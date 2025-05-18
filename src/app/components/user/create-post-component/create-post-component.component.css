@@ -1,3 +1,9 @@
+section {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .create-post-container {
   background: #fff;
   padding: 24px;
@@ -8,7 +14,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  
+
 }
 
 .create-post-container h2 {

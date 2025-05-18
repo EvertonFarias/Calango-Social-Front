@@ -1,0 +1,66 @@
+<div class="page-wrapper">
+  <div class="profile-container">
+    <div class="header">
+      <!-- Imagem de perfil clicável -->
+      <img 
+        [src]="selectedProfileImage" 
+        alt="Foto de perfil" 
+        class="profile-pic" 
+        (click)="openModal()" 
+      />
+      
+      <div class="user-info">
+        <h2>{{ user?.login }}</h2>
+        <p>Nascido em: {{ user?.dateOfBirth | date:'longDate' }}</p>
+      </div>
+    </div>
+
+    <div class="posts-section">
+      <h3>Posts</h3>
+      <div *ngIf="posts.length > 0; else noPosts" class="posts-container">
+        <div *ngFor="let post of posts" class="post-card">
+          <!-- Post com imagem -->
+          <div *ngIf="post.imageUrl" class="post-media">
+            <img [src]="post.imageUrl" alt="Imagem do post" class="post-image" />
+          </div>
+
+          <!-- Post com vídeo -->
+          <div *ngIf="post.videoUrl && !post.imageUrl" class="post-media video-container">
+            <video [src]="post.videoUrl" controls controlsList="nodownload" class="post-video"></video>
+          </div>
+
+          <!-- Conteúdo do post -->
+          <div class="post-content">
+            <p>{{ post.content }}</p>
+            <span class="post-date">{{ post.createdAt | date:'shortDate' }}</span>
+          </div>
+        </div>
+      </div>
+      <ng-template #noPosts>
+        <div class="empty-state">
+          <p>Você ainda não postou nada. 
+            <a routerLink="../../user/create-post" class="create-post-link">Poste algo</a>
+          </p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de seleção de imagem -->
+<div class="modal-backdrop" *ngIf="isModalOpen" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Escolha sua foto de perfil</h3>
+    
+    <div class="images-grid">
+      <img 
+        *ngFor="let image of calangoImages"
+        [src]="image"
+        class="selectable-image"
+        (click)="selectImage(image)"
+      />
+    </div>
+    
+    <button class="close-button" (click)="closeModal()">Fechar</button>
+  </div>
+</div>

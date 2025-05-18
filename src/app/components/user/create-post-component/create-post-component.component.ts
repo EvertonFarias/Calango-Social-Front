@@ -24,7 +24,7 @@ export class CreatePostComponent implements OnInit {
   isUploading = false;
   uploadProgress = 0;
   
-  // Usuário fixo para teste (depois você pode pegar do seu sistema de autenticação)
+
   userId = '4d589306-bc2b-4ac0-b30e-7be611be6614';
 
   constructor(

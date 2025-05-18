@@ -1,0 +1,275 @@
+.page-wrapper {
+  display: flex;
+  justify-content: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.profile-container {
+  width: 900px;
+  margin-top: 20px;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  color: #262626;
+  background-color: #fff;
+}
+
+/* Cabeçalho com foto e infos */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+/* Foto do perfil arredondada com sombra */
+.profile-pic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 15%; 
+  border: 3px solid #65bbe2;
+  box-shadow: 0 4px 10px rgba(6, 137, 189, 0.3);
+  transition: transform 0.3s ease;
+}
+
+
+.profile-pic:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+/* Informações do usuário */
+.user-info h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.user-info p {
+  margin-top: 6px;
+  font-size: 15px;
+  color: #8e8e8e;
+  font-weight: 500;
+}
+
+/* Seção dos posts */
+.posts-section h3 {
+  font-size: 22px;
+  font-weight: 600;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  color: #333;
+  position: relative;
+}
+
+.posts-section h3:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: #65bbe2;
+}
+
+/* Container de posts com rolagem */
+.posts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Design de card para cada post */
+.post-card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+}
+
+/* Área de mídia do post */
+.post-media {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background-color: #f8f8f8;
+}
+
+.post-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-container {
+  position: relative;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Garantir que controles de vídeo sejam totalmente utilizáveis */
+.video-container video::-webkit-media-controls {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+/* Estilo para o video em foco */
+.video-container:focus-within {
+  box-shadow: 0 0 0 2px #65bbe2;
+}
+
+.post-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.post-media:hover .post-image {
+  transform: scale(1.05);
+}
+
+/* Conteúdo do post */
+.post-content {
+  padding: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-content p {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #444;
+  flex-grow: 1;
+}
+
+.post-date {
+  font-size: 12px;
+  color: #999;
+  align-self: flex-end;
+}
+
+/* Estado vazio */
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px dashed #ddd;
+}
+
+.empty-state p {
+  color: #777;
+  font-size: 16px;
+  margin: 0;
+}
+
+.create-post-link {
+  color: #65bbe2;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.create-post-link:hover {
+  color: #4a8caa;
+  text-decoration: underline;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.images-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.selectable-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s, border 0.2s;
+}
+
+.selectable-image:hover {
+  transform: scale(1.1);
+  border: 2px solid #007bff;
+}
+
+.close-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  background-color: #0056b3;
+}
+
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .profile-container {
+    width: 100%;
+    border-radius: 0;
+    padding: 16px;
+  }
+  
+  .header {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .posts-container {
+    grid-template-columns: 1fr;
+  }
+}
