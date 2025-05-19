@@ -2,36 +2,59 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 260px;
+  width: 70px; /* Largura base para os ícones */
   height: 100vh;
   background-color: #ffffff;
   border-right: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 1.5rem 1rem;
+  padding: 1.5rem 0;
   box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
   z-index: 1000;
+  transition: width 0.3s ease, padding 0.3s ease;
+  overflow-x: hidden; /* Previne overflow na horizontal */
+}
+
+/* Estado normal da sidebar - expandida com texto */
+.sidebar-container:not(.expanded-search) {
+  width: 260px;
+  padding: 1.5rem 1rem;
+}
+
+/* Estado expandido para pesquisa */
+.sidebar-container.expanded-search {
+  width: 350px;
+  display: grid;
+  grid-template-columns: 70px 1fr; /* Coluna de ícones (70px) e coluna de pesquisa */
 }
 
 .logo-container {
-  margin-bottom: 2rem;
   text-align: center;
+  margin-bottom: 2rem;
+  transition: opacity 0.3s ease;
+  grid-column: 1 / span 2; /* Ocupa ambas colunas no grid */
 }
 
+.logo-container.minimized {
+  opacity: 0.6;
+  transform: scale(0.8);
+  grid-column: 1; /* Apenas na coluna de ícones quando minimizado */
+}
 
 h1 {
-    font-size: 1.8rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    background: linear-gradient(90deg, #2F80ED, #1d5bb0);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #2F80ED, #1d5bb0);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .navigation {
   flex-grow: 1;
+  grid-column: 1; /* Na coluna 1 quando em modo pesquisa */
 }
 
 .menu-list {
@@ -42,6 +65,7 @@ h1 {
 
 .menu-list li {
   margin-bottom: 1rem;
+  position: relative;
 }
 
 .menu-list a {
@@ -55,13 +79,215 @@ h1 {
   font-size: 1rem;
   font-weight: 500;
   transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
+  justify-content: flex-start;
+  cursor: pointer;
 }
 
+/* Estilo para quando está apenas com ícones */
+.menu-list a.icon-only {
+  justify-content: center;
+  padding: 0.75rem 0;
+  width: 40px;
+  margin: 0 auto;
+}
 
 .menu-list a:hover,
 .menu-list a:focus {
   background-color: #f0f0f0;
   color: #000;
+}
+
+.menu-list a.active {
+  background-color: #f0f0f0;
+  color: #2F80ED;
+  font-weight: 600;
+}
+
+/* Painel de pesquisa */
+.search-panel {
+  padding: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  overflow-y: none;
+  max-height: 100vh;
+  max-width: 200px;
+  grid-column: 2; 
+  grid-row: 1 / span 3; 
+  border-left: 1px solid rgba(0, 0, 0, 0.096);
+}
+
+.search-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.search-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.close-search {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 50%;
+}
+
+.close-search:hover {
+  background-color: #f0f0f0;
+}
+
+.search-input-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background-color: #f5f5f5;
+  font-size: 0.9rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #2F80ED;
+  background-color: #ffffff;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
+  font-size: 1.2rem;
+}
+
+.clear-icon {
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.clear-icon:hover {
+  color: #2F80ED;
+}
+
+/* Resultados da pesquisa */
+.search-results, .recent-searches {
+  overflow-y: auto;
+}
+
+.search-result-item, .recent-search-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-result-item:hover, 
+.recent-search-item:hover {
+  background-color: #f5f5f5;
+}
+
+.result-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  object-fit: cover;
+}
+
+.result-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-username {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.result-name {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.no-results {
+  padding: 1rem 0;
+  text-align: center;
+  color: #777;
+}
+
+/* Pesquisas recentes */
+.recent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.recent-header h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.clear-all {
+  background: none;
+  border: none;
+  color: #2F80ED;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.recent-search-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recent-user-info {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.remove-recent {
+  background: none;
+  border: none;
+  color: #777;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-recent:hover {
+  color: #2F80ED;
 }
 
 .logout-button {
@@ -77,7 +303,19 @@ h1 {
   font-weight: 500;
   color: #333;
   transition: background-color 0.2s, color 0.2s;
-  margin-bottom: 50px;
+  margin: 0 1rem 50px;
+  justify-content: flex-start;
+  grid-column: 1; /* Na coluna 1 quando em modo pesquisa */
+}
+
+/* Botão de logout apenas com ícone */
+.logout-button.icon-only {
+  justify-content: center;
+  margin: 0 auto 50px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
 }
 
 .logout-button:hover {
@@ -90,4 +328,3 @@ h1 {
   font-size: 20px;
   line-height: 1;
 }
-

@@ -13,17 +13,20 @@
       <img *ngIf="post.imageUrl" [src]="post.imageUrl" class="post-media" alt="Post Image">
       <div *ngIf="post.videoUrl" class="video-container">
         <video width="100%" controls [poster]="post.thumbnailUrl" playsinline>
-        <source [src]="post.videoUrl" type="video/mp4">
-        Seu navegador não suporta vídeo.
+          <source [src]="post.videoUrl" type="video/mp4">
+          Seu navegador não suporta vídeo.
         </video>
-
       </div>
     </div>
 
     <div class="post-actions">
-      ❤️ {{ post.likesCount }} &nbsp; 💬 {{ post.commentsCount }}
-      <button (click)="navigateToPost(post.id)">Ver mais</button>
+    <span class="material-symbols-outlined">
+        <mat-icon class="likeButton" color="warn">thumb_up</mat-icon> {{ post.likesCount }}
+        <mat-icon class="commentButton comment-icon" color="primary">chat</mat-icon> {{ post.commentsCount }}
+    </span>
+    <button mat-stroked-button color="primary" (click)="navigateToPost(post.id)">Ver mais</button>
     </div>
+
   </div>
 </div>
 

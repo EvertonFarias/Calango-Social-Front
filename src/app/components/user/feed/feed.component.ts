@@ -7,6 +7,9 @@ import { RouterModule, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { UserDTO, UserService } from '../../../services/UserService';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
 
 interface Post {
   id: string;
@@ -25,7 +28,9 @@ interface Post {
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MatIconModule,
+    MatMenuModule,
+    MatButtonModule],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css']
 })
@@ -46,38 +51,33 @@ export class FeedComponent implements OnInit {
   }
 
   loadUserAndFetchFeed(): void {
-    this.userService.loadUser()
-      .pipe(
-        switchMap(user => {
-          if (!user) {
-            throw new Error('Usuário não encontrado');
-          }
+  this.userService.loadUser()
+    .pipe(
+      switchMap(user => {
+        if (!user) {
+          throw new Error('Usuário não encontrado');
+        }
 
-          this.user = user;
-          const token = this.authService.getToken();
+        this.user = user;
+        const token = this.authService.getToken();
 
-          const headers = new HttpHeaders({
-            'Authorization': `Bearer ${token}`
-          });
+        const headers = new HttpHeaders({
+          'Authorization': `Bearer ${token}`
+        });
 
-          return this.http.get<Post[]>(`${environment.apiUrl}/api/feed/${user.id}`, { headers });
-        }),
-        catchError(error => {
-          console.error('Erro ao carregar feed:', error);
-          this.isLoading = false;
-          return of([]);
-        })
-      )
-      .subscribe(posts => {
-        this.posts = posts.map(post => ({
-          ...post,
-          thumbnailUrl: post.videoUrl && !post.thumbnailUrl
-            ? 'assets/video-thumbnail-placeholder.jpg'
-            : post.thumbnailUrl
-        }));
+        return this.http.get<Post[]>(`${environment.apiUrl}/api/feed/${user.id}`, { headers });
+      }),
+      catchError(error => {
+        console.error('Erro ao carregar feed:', error);
         this.isLoading = false;
-      });
-  }
+        return of([]);
+      })
+    )
+    .subscribe(posts => {
+      this.posts = posts;
+      this.isLoading = false;
+    });
+}
 
   navigateToPost(postId: string): void {
     this.router.navigate(['/post', postId]);

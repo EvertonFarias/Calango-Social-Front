@@ -69,3 +69,22 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.likeButton, .commentButton {
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  border-radius: 50%;
+  padding: 4px;
+}
+
+.likeButton:hover {
+  background-color: rgba(22, 152, 228, 0.1); 
+  color: rgb(30, 153, 235);
+  transform: scale(1.2);
+}
+
+.commentButton:hover {
+  background-color: rgba(33, 150, 243, 0.1); /* azul claro */
+  transform: scale(1.2);
+}
+

@@ -1,26 +1,117 @@
-<div class="sidebar-container">
-  <div class="logo-container">
+<div class="sidebar-container" [class.expanded-search]="isSearchActive">
+  <div class="logo-container" [class.minimized]="isSearchActive">
     <a routerLink="/user/home" class="logo">
-      <h1>CalangoSocial</h1>
+      <h1 *ngIf="!isSearchActive">CalangoSocial</h1>
+      <span *ngIf="isSearchActive" class="material-symbols-outlined">diversity_3</span>
     </a>
   </div>
 
   <nav class="navigation">
     <ul class="menu-list">
-        <li><a routerLink="/user/home"><span class="material-symbols-outlined">home</span> Página Inicial</a></li>
-        <li><a routerLink="/search"><span class="material-symbols-outlined">search</span> Pesquisa</a></li>
-        <li><a routerLink="user/messages"><span class="material-symbols-outlined">chat</span> Mensagens</a></li>
-        <li><a routerLink="user/notifications"><span class="material-symbols-outlined">notifications</span> Notificações</a></li>
-        <li><a routerLink="/user/create-post"><span class="material-symbols-outlined">add</span> Criar</a></li>
-        <li><a routerLink="/user/profile"><span class="material-symbols-outlined">person</span> Perfil</a></li>
+      <li>
+        <a routerLink="/user/home" [class.icon-only]="isSearchActive">
+          <span class="material-symbols-outlined">home</span> 
+          <span class="menu-text" *ngIf="!isSearchActive">Página Inicial</span>
+        </a>
+      </li>
+      
+      <li>
+        <a (click)="toggleSearch($event)" [class.active]="isSearchActive" [class.icon-only]="isSearchActive">
+          <span class="material-symbols-outlined">search</span>
+          <span class="menu-text" *ngIf="!isSearchActive">Pesquisa</span>
+        </a>
+      </li>
+      
+      <li>
+        <a routerLink="user/messages" [class.icon-only]="isSearchActive">
+          <span class="material-symbols-outlined">chat</span>
+          <span class="menu-text" *ngIf="!isSearchActive">Mensagens</span>
+        </a>
+      </li>
+      
+      <li>
+        <a routerLink="user/notifications" [class.icon-only]="isSearchActive">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="menu-text" *ngIf="!isSearchActive">Notificações</span>
+        </a>
+      </li>
+      
+      <li>
+        <a routerLink="/user/create-post" [class.icon-only]="isSearchActive">
+          <span class="material-symbols-outlined">add</span>
+          <span class="menu-text" *ngIf="!isSearchActive">Criar</span>
+        </a>
+      </li>
+      
+      <li>
+        <a routerLink="/user/profile" [class.icon-only]="isSearchActive">
+          <span class="material-symbols-outlined">person</span>
+          <span class="menu-text" *ngIf="!isSearchActive">Perfil</span>
+        </a>
+      </li>
     </ul>
   </nav>
 
-    <button class="btn-basic logout-button" (click)="logout()">
+  <!-- Painel de pesquisa dentro da sidebar -->
+  <div class="search-panel" *ngIf="isSearchActive">
+    <div class="search-header">
+      <h3>Pesquisar</h3>
+      <button class="close-search" (click)="closeSearch()">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+    </div>
+    
+    <div class="search-input-container">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input 
+        type="text" 
+        placeholder="Pesquisar..." 
+        [(ngModel)]="searchQuery" 
+        (input)="onSearch()"
+        class="search-input"
+        #searchInput>
+      <span 
+        *ngIf="searchQuery" 
+        class="material-symbols-outlined clear-icon" 
+        (click)="clearSearch()">close</span>
+    </div>
+    
+    <div class="search-results" *ngIf="searchResults.length > 0">
+      <div class="search-result-item" *ngFor="let result of searchResults" (click)="selectSearchResult(result)">
+        <img [src]="result.profilePic || 'assets/images/default-avatar.png'" alt="Profile picture" class="result-avatar">
+        <div class="result-details">
+          <span class="result-username">{{result.username}}</span>
+          <span class="result-name">{{result.name}}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="no-results" *ngIf="searchQuery && searchResults.length === 0">
+      <p>Nenhum resultado encontrado</p>
+    </div>
+    
+    <div class="recent-searches" *ngIf="!searchQuery && recentSearches.length > 0">
+      <div class="recent-header">
+        <h4>Pesquisas recentes</h4>
+        <button class="clear-all" (click)="clearAllRecentSearches()">Limpar tudo</button>
+      </div>
+      <div class="recent-search-item" *ngFor="let recent of recentSearches">
+        <div class="recent-user-info" (click)="selectSearchResult(recent)">
+          <img [src]="recent.profilePic || 'assets/images/default-avatar.png'" alt="Profile picture" class="result-avatar">
+          <div class="result-details">
+            <span class="result-username">{{recent.username}}</span>
+            <span class="result-name">{{recent.name}}</span>
+          </div>
+        </div>
+        <button class="remove-recent" (click)="removeRecentSearch(recent.id, $event)">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-basic logout-button" (click)="logout()" [class.icon-only]="isSearchActive">
     <span class="material-symbols-outlined">logout</span>
-    Sair
-    </button>
-
-
-  
-</div> 
+    <span class="menu-text" *ngIf="!isSearchActive">Sair</span>
+  </button>
+</div>
