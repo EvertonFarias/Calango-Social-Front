@@ -1,9 +1,9 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subscription, timer } from 'rxjs';
-import { switchMap, catchError, tap, shareReplay } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { catchError, tap, shareReplay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
-import { map, filter } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environment';
 
 export interface UserDTO {
@@ -23,8 +23,7 @@ export interface UserDTO {
 })
 export class UserService implements OnDestroy {
   private userSubject = new BehaviorSubject<UserDTO | null>(null);
-  private verificationPollingSubscription: Subscription | null = null;
-  
+
   // Expõe o usuário como Observable
   readonly user$ = this.userSubject.asObservable();
   
@@ -38,87 +37,37 @@ export class UserService implements OnDestroy {
     private http: HttpClient, 
     private authService: AuthService
   ) {
-    this.initializeUser();
+    this.loadUser(); // Carrega o usuário uma única vez na inicialização
   }
 
-  /**
-   * Inicializa o usuário e começa o polling de verificação se necessário
-   */
-  private initializeUser(): void {
-    // Carregar o usuário imediatamente
-    this.loadUser();
+  
+  private fetchUserData(): Observable<UserDTO | null> {
+    const token = this.authService.getToken();
+    const userId = this.authService.getUserId();
     
-    // Configurar o polling de verificação apenas quando necessário
-    this.setupVerificationPolling();
-  }
-
-  /**
-   * Configura o polling de verificação de email quando o usuário não está verificado
-   */
-  private setupVerificationPolling(): void {
-    // Cancelar qualquer polling existente
-    this.stopVerificationPolling();
-    
-    // Iniciar novo polling apenas se o usuário existir e não estiver verificado
-    this.verificationPollingSubscription = this.user$.pipe(
-      // Comece o polling apenas quando tivermos um usuário não verificado
-      filter(user => !!user && !user.verifiedEmail),
-      // Cancela subscrição anterior ao iniciar nova
-      switchMap(() => timer(0, 15000)),
-      // A cada tick do timer, busque os dados do usuário novamente
-      switchMap(() => this.fetchUserData())
-    ).subscribe();
-  }
-
-  /**
-   * Para o polling de verificação
-   */
-  private stopVerificationPolling(): void {
-    if (this.verificationPollingSubscription) {
-      this.verificationPollingSubscription.unsubscribe();
-      this.verificationPollingSubscription = null;
+    if (!token || !userId || !this.authService.isLoggedIn?.()) {
+      this.userSubject.next(null);
+      return new Observable(subscriber => {
+        subscriber.next(null);
+        subscriber.complete();
+      });
     }
-  }
 
-  /**
-   * Busca os dados do usuário da API
-   */
-    private fetchUserData(): Observable<UserDTO | null> {
-      const token = this.authService.getToken();
-      const userId = this.authService.getUserId();
-      
-      if (!token || !userId || !this.authService.isLoggedIn?.()) {
-        this.userSubject.next(null);
-        return new Observable(subscriber => {
+    return this.http.get<UserDTO>(`${environment.apiUrl}/users/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).pipe(
+      tap(user => this.userSubject.next(user)),
+      catchError(error => {
+        console.error('Erro ao buscar dados do usuário:', error);
+        return new Observable<UserDTO | null>(subscriber => {
           subscriber.next(null);
           subscriber.complete();
         });
-      }
+      })
+    );
+  }
 
-      return this.http.get<UserDTO>(`${environment.apiUrl}/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).pipe(
-        tap(user => {
-          this.userSubject.next(user);
-          
-          // Se o usuário estiver verificado, podemos parar o polling
-          if (user.verifiedEmail) {
-            this.stopVerificationPolling();
-          }
-        }),
-        catchError(error => {
-          console.error('Erro ao buscar dados do usuário:', error);
-          return new Observable<UserDTO | null>(subscriber => {
-            subscriber.next(null);
-            subscriber.complete();
-          });
-        })
-      );
-    }
 
-  /**
-   * Carrega os dados do usuário manualmente
-   */
   loadUser(): Observable<UserDTO | null> {
     const userData$ = this.fetchUserData();
     userData$.subscribe();
@@ -133,6 +82,5 @@ export class UserService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.stopVerificationPolling();
   }
 }

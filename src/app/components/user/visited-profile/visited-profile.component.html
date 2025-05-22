@@ -1,0 +1,125 @@
+<div class="page-wrapper">
+  <div class="profile-container">
+    <div class="header">
+      <!-- Imagem de perfil (não clicável para usuário visitado) -->
+      <img 
+        [src]="getProfileImage()" 
+        alt="Foto de perfil" 
+        class="profile-pic visited-profile-pic" 
+      />
+      
+      <div class="user-info">
+        <h2>{{ visitedUser?.login }}</h2>
+        <p>
+          <mat-icon class="birth-icon">cake</mat-icon>
+          Nascido em: {{ visitedUser?.dateOfBirth | date:'longDate' }}
+        </p>
+        
+        <!-- Status da solicitação de amizade -->
+        <div *ngIf="!friendshipStatus.isCurrentUser" class="friendship-status">
+          <div *ngIf="friendshipStatus.isPending" class="pending-info">
+            <span *ngIf="friendshipStatus.isRequestSender" class="status-text">
+              <mat-icon class="status-icon sent">send</mat-icon>
+              Solicitação enviada
+            </span>
+            <span *ngIf="!friendshipStatus.isRequestSender" class="status-text incoming-request">
+              <mat-icon class="status-icon incoming">mail</mat-icon>
+              Solicitação recebida
+            </span>
+          </div>
+          
+          <div *ngIf="friendshipStatus.isFriend" class="friend-info">
+            <span class="status-text friends">
+              <mat-icon class="status-icon friends">group</mat-icon>
+              Vocês são amigos
+            </span>
+          </div>
+        </div>
+        
+        <!-- Botões de ação -->
+        <div *ngIf="!friendshipStatus.isCurrentUser" class="action-buttons">
+          <!-- Caso seja uma solicitação recebida -->
+          <div *ngIf="friendshipStatus.isPending && !friendshipStatus.isRequestSender" class="pending-actions">
+            <button 
+              class="friend-button accept-friend"
+              (click)="acceptFriendRequest()"
+            >
+              <mat-icon>check_circle</mat-icon>
+              Aceitar
+            </button>
+            <button 
+              class="friend-button decline-friend"
+              (click)="declineFriendRequest()"
+            >
+              <mat-icon>cancel</mat-icon>
+              Recusar
+            </button>
+          </div>
+          
+          <!-- Caso seja uma solicitação enviada ou amigos ou sem relação -->
+          <button 
+            *ngIf="!friendshipStatus.isPending || friendshipStatus.isRequestSender"
+            [class]="getButtonClass()"
+            (click)="onFriendButtonClick()"
+            [disabled]="!visitedUser"
+          >
+            <mat-icon>{{ getButtonIcon() }}</mat-icon>
+            {{ getButtonText() }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção de estatísticas (estilo Instagram) -->
+    <div class="stats-section">
+      <div class="stat-item">
+        <mat-icon class="stat-icon">grid_on</mat-icon>
+        <span class="stat-number">{{ posts.length }}</span>
+        <span class="stat-label">posts</span>
+      </div>
+      <div class="stat-item">
+        <mat-icon class="stat-icon">group</mat-icon>
+        <span class="stat-number">{{ friendsCount || 0 }}</span>
+        <span class="stat-label">amigos</span>
+      </div>
+    </div>
+
+    <!-- Seção de posts no formato grid -->
+    <div class="posts-section">
+      <div *ngIf="posts.length > 0; else noPosts" class="posts-grid">
+        <!-- Post com mídia (imagem ou vídeo) -->
+        <div *ngFor="let post of posts" class="grid-item" (click)="navigateToFullPost(post.id)">
+          <!-- Indica se é foto ou vídeo com um ícone -->
+          <div class="media-type-indicator" *ngIf="post.videoUrl">
+            <mat-icon class="video-icon">play_circle_filled</mat-icon>
+          </div>
+          
+          <!-- Post com mídia (foto ou vídeo) -->
+          <div *ngIf="post.imageUrl || post.videoUrl" class="grid-media">
+            <img *ngIf="post.imageUrl" [src]="post.imageUrl" alt="Post" class="grid-image" />
+            <video
+              *ngIf="post.videoUrl && !post.imageUrl"
+              class="grid-image"
+              [src]="post.videoUrl"
+              muted
+              playsinline
+              preload="metadata"
+            ></video>
+          </div>
+          
+          <!-- Post somente texto (mostra um preview) -->
+          <div *ngIf="!post.imageUrl && !post.videoUrl" class="text-post-preview">
+            <mat-icon class="text-post-icon">article</mat-icon>
+            <p class="text-content-preview">{{ post.content | slice:0:50 }}{{ post.content.length > 50 ? '...' : '' }}</p>
+          </div>
+        </div>
+      </div>
+      <ng-template #noPosts>
+        <div class="empty-state">
+          <mat-icon class="empty-icon">inbox</mat-icon>
+          <p>Este usuário ainda não postou nada.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

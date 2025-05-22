@@ -80,14 +80,14 @@ export class FeedComponent implements OnInit {
 }
 
   navigateToPost(postId: string): void {
-    this.router.navigate(['/post', postId]);
+    this.router.navigate(['user/post', postId]);
   }
 
 navigateToProfile(userId: string): void {
   if (this.user && userId === this.user.id) {
     this.router.navigate(['user/profile']);
   } else {
-    this.router.navigate(['/profile', userId]);
+    this.router.navigate(['user/profile/', userId]);
   }
 }
 }

@@ -8,6 +8,8 @@ import { finalize } from 'rxjs/operators';
 import { FileUploadService } from '../../../services/FileUploadService';
 import { PostRequestDto, PostService } from '../../../services/PostService';
 import { UserService } from '../../../services/UserService';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-post-component',
@@ -25,13 +27,30 @@ export class CreatePostComponent implements OnInit {
   isUploading = false;
   uploadProgress = 0;
   userId: string = '';
+  readonly MAX_IMAGE_SIZE_MB = 5;
+  readonly MAX_VIDEO_SIZE_MB = 20;
+
+    private showToast(icon: 'success' | 'error' | 'info', title: string) {
+      Swal.fire({
+        toast: true,
+        position: 'bottom-end',
+        icon,
+        title,
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true
+      });
+    }
 
   constructor(
     private fb: FormBuilder,
     private fileUploadService: FileUploadService,
     private postService: PostService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
+    
   ) { }
+  
 
   ngOnInit(): void {
     this.postForm = this.fb.group({
@@ -50,43 +69,58 @@ export class CreatePostComponent implements OnInit {
   }
 
 
-  onImageSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedImage = input.files[0];
-      
-      // Criar preview da imagem
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result as string;
-      };
-      reader.readAsDataURL(this.selectedImage);
-      
-      // Limpar vídeo se imagem for selecionada
-      this.selectedVideo = null;
-      this.videoPreview = null;
-      this.postForm.patchValue({ videoUrl: null });
-    }
-  }
+onImageSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    const file = input.files[0];
 
-  onVideoSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedVideo = input.files[0];
-      
-      // Criar preview do vídeo
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.videoPreview = reader.result as string;
-      };
-      reader.readAsDataURL(this.selectedVideo);
-      
-      // Limpar imagem se vídeo for selecionado
-      this.selectedImage = null;
-      this.imagePreview = null;
-      this.postForm.patchValue({ imageUrl: null });
+    if (file.size > this.MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+      this.showToast('error', `A imagem excede o limite de ${this.MAX_IMAGE_SIZE_MB} MB.`);
+      input.value = ''; 
+      return;
     }
+
+    this.selectedImage = file;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
+    };
+    reader.readAsDataURL(this.selectedImage);
+
+    this.selectedVideo = null;
+    this.videoPreview = null;
+    this.postForm.patchValue({ videoUrl: null });
   }
+}
+
+
+  
+  onVideoSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    const file = input.files[0];
+
+    if (file.size > this.MAX_VIDEO_SIZE_MB * 1024 * 1024) {
+      this.showToast('error', `O vídeo excede o limite de ${this.MAX_VIDEO_SIZE_MB} MB.`);
+      input.value = ''; 
+      return;
+    }
+
+    this.selectedVideo = file;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.videoPreview = reader.result as string;
+    };
+    reader.readAsDataURL(this.selectedVideo);
+
+    this.selectedImage = null;
+    this.imagePreview = null;
+    this.postForm.patchValue({ imageUrl: null });
+  }
+}
+
 
   async submitPost(): Promise<void> {
     if (this.postForm.invalid) {
@@ -176,7 +210,18 @@ export class CreatePostComponent implements OnInit {
     this.postService.createPost(post).subscribe({
       next: (response) => {
         console.log('Post criado com sucesso:', response);
-        this.resetForm();
+        Swal.fire({
+                    toast: true,
+                    position: 'bottom-end',
+                    icon: 'success',
+                    title: 'Post criado com sucesso!',
+                    showConfirmButton: false,
+                    timer: 2500,
+                    timerProgressBar: true
+                  }).then(() => {
+                    this.router.navigate([`/user/post/${response.id}`]);
+                  });
+         
       },
       error: (error) => {
         console.error('Erro ao criar post:', error);

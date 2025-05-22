@@ -51,4 +51,11 @@ export class PostService {
       headers: this.getAuthHeaders()
     });
   }
+
+  deletePost(postId: string, userId: string) {
+    return this.http.delete(`${this.apiUrl}/${postId}/users/${userId}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
 }

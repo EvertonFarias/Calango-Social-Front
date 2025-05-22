@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Storage, ref, uploadBytesResumable, getDownloadURL } from '@angular/fire/storage';
+import { Storage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from '@angular/fire/storage';
 import { Observable, Subject } from 'rxjs';
 
 export interface UploadResult {
@@ -56,5 +56,9 @@ export class FileUploadService {
     );
 
     return result$;
+  }
+    deleteFile(filePath: string): Promise<void> {
+    const fileRef = ref(this.storage, filePath);
+    return deleteObject(fileRef);
   }
 }

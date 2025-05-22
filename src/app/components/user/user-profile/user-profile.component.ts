@@ -6,6 +6,12 @@ import { UserDTO, UserService } from '../../../services/UserService';
 import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../environment';
 import { RouterModule, Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { FriendshipService } from '../../../services/FriendshipService';
+import { PostService } from '../../../services/PostService';
+import Swal from 'sweetalert2';
 
 interface Post {
   id: string;
@@ -22,25 +28,40 @@ interface Post {
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule,MatIconModule, MatMenuModule,
+    MatButtonModule],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent implements OnInit {
+
   user: UserDTO | null = null;
   posts: Post[] = [];
-  followers: number = 0;
-  following: number = 0;
+  friendsCount: number = 0;
 
   isModalOpen = false;
   calangoImages: string[] = [];
   selectedProfileImage: string = ''; 
 
+  private showToast(icon: 'success' | 'error' | 'info', title: string) {
+        Swal.fire({
+          toast: true,
+          position: 'bottom-end',
+          icon,
+          title,
+          showConfirmButton: false,
+          timer: 2500,
+          timerProgressBar: true
+        });
+      }
+
   constructor(
     private userService: UserService,
     private authService: AuthService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private friendshipService: FriendshipService,
+    private postsService: PostService
   ) {}
 
   ngOnInit(): void {
@@ -51,13 +72,14 @@ export class UserProfileComponent implements OnInit {
         switchMap(user => {
           if (user && this.authService.isLoggedIn()) {
             this.user = user;
+            this.loadFriendsCount(user.id);
 
             this.selectedProfileImage = (typeof user.profilePicture === 'string' && user.profilePicture.trim() !== '')
               ? user.profilePicture
               : 'img/calangos/default.png';
 
             // Carregar contagem de seguidores e seguindo (simulados por enquanto)
-            this.loadFollowStats(user.id);
+            
 
             const token = this.authService.getToken();
             const headers = new HttpHeaders({
@@ -91,26 +113,11 @@ export class UserProfileComponent implements OnInit {
   }
 
   // Simula o carregamento de estatísticas de seguidores (em uma aplicação real, isso viria da API)
-  loadFollowStats(userId: string): void {
-    // Valores simulados para exemplo
-    this.followers = Math.floor(Math.random() * 1000);
-    this.following = Math.floor(Math.random() * 500);
-    
-    // Em uma implementação real, você faria uma chamada à API
-    // this.http.get(`${environment.apiUrl}/api/users/${userId}/followers/count`)
-    //   .subscribe((data: any) => {
-    //     this.followers = data.count;
-    //   });
-    
-    // this.http.get(`${environment.apiUrl}/api/users/${userId}/following/count`)
-    //   .subscribe((data: any) => {
-    //     this.following = data.count;
-    //   });
-  }
+  
 
   // Navega para a página do post completo
   navigateToFullPost(postId: string): void {
-    this.router.navigate(['/post', postId]);
+    this.router.navigate(['user/post', postId]);
   }
 
   openModal(): void {
@@ -146,4 +153,30 @@ export class UserProfileComponent implements OnInit {
 
     this.closeModal();
   }
+    private loadFriendsCount(userId: string): void {
+    this.friendshipService.getUserFriends(userId)
+      .subscribe(friends => {
+        this.friendsCount = friends.length;
+      });
+  }
+
+deletePost(postId: string): void {
+  const userId = this.authService.getUserId();
+  if (userId) {
+    this.postsService.deletePost(postId, userId).subscribe({
+      next: () => {
+        console.log('Post deletado com sucesso.');
+        this.showToast("success", "Post deletado com sucesso");
+        this.posts = this.posts.filter(post => post.id !== postId);
+      },
+      error: (err) => {
+        console.error('Erro ao deletar post:', err);
+        this.showToast("error", "Erro ao deletar o post");
+      }
+    });
+  } else {
+    console.error('Usuário não autenticado. Não é possível deletar o post.');
+  }
+}
+
 }

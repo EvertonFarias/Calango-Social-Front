@@ -11,23 +11,32 @@
       
       <div class="user-info">
         <h2>{{ user?.login }}</h2>
-        <p>Nascido em: {{ user?.dateOfBirth | date:'longDate' }}</p>
+        <p>
+          <mat-icon class="birth-icon">cake</mat-icon>
+          Nascido em: {{ user?.dateOfBirth | date:'longDate' }}
+        </p>
+        
+        <!-- Indicador de perfil próprio -->
+        <div class="own-profile-indicator">
+          <span class="status-text own-profile">
+            <mat-icon class="status-icon own">account_circle</mat-icon>
+            Seu perfil
+          </span>
+        </div>
       </div>
     </div>
 
-    <!-- Seção de estatísticas (estilo Instagram) -->
-    <div class="stats-section">
+   
+   <div class="stats-section">
       <div class="stat-item">
+        <mat-icon class="stat-icon">grid_on</mat-icon>
         <span class="stat-number">{{ posts.length }}</span>
         <span class="stat-label">posts</span>
       </div>
       <div class="stat-item">
-        <span class="stat-number">{{ followers || 0 }}</span>
-        <span class="stat-label">seguidores</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{ following || 0 }}</span>
-        <span class="stat-label">seguindo</span>
+        <mat-icon class="stat-icon">group</mat-icon>
+        <span class="stat-number">{{ friendsCount || 0 }}</span>
+        <span class="stat-label">amigos</span>
       </div>
     </div>
 
@@ -36,35 +45,55 @@
       <div *ngIf="posts.length > 0; else noPosts" class="posts-grid">
         <!-- Post com mídia (imagem ou vídeo) -->
         <div *ngFor="let post of posts" class="grid-item" (click)="navigateToFullPost(post.id)">
-          <!-- Indica se é foto ou vídeo com um ícone -->
-          <div class="media-type-indicator" *ngIf="post.videoUrl">
-            <i class="video-icon">▶</i>
+          <!-- Menu de opções -->
+          <div class="post-menu" (click)="$event.stopPropagation()">
+            <button mat-icon-button [matMenuTriggerFor]="postMenu" (click)="$event.stopPropagation()">
+              <span class="material-symbols-outlined">
+                more_horiz
+              </span>
+            </button>
+            <mat-menu #postMenu="matMenu">
+              <button mat-menu-item (click)="deletePost(post.id)">
+                <mat-icon>delete</mat-icon>
+                <span>Deletar</span>
+              </button>
+            </mat-menu>
           </div>
-          
-          <!-- Post com mídia (foto ou vídeo) -->
-          <div *ngIf="post.imageUrl || post.videoUrl" class="grid-media">
-            <img *ngIf="post.imageUrl" [src]="post.imageUrl" alt="Post" class="grid-image" />
-            <video
-              *ngIf="post.videoUrl && !post.imageUrl"
-              class="grid-image"
-              [src]="post.videoUrl"
-              muted
-              playsinline
-              preload="metadata"
-            ></video>
-          </div>
-          
-          <!-- Post somente texto (mostra um preview) -->
-          <div *ngIf="!post.imageUrl && !post.videoUrl" class="text-post-preview">
-            <p class="text-content-preview">{{ post.content | slice:0:50 }}{{ post.content.length > 50 ? '...' : '' }}</p>
-          </div>
-        </div>
+
+  <!-- Indicador de tipo de mídia -->
+  <div class="media-type-indicator" *ngIf="post.videoUrl">
+    <mat-icon class="video-icon">play_circle_filled</mat-icon>
+  </div>
+
+  <!-- Mídia -->
+  <div *ngIf="post.imageUrl || post.videoUrl" class="grid-media">
+    <img *ngIf="post.imageUrl" [src]="post.imageUrl" alt="Post" class="grid-image" />
+    <video
+      *ngIf="post.videoUrl && !post.imageUrl"
+      class="grid-image"
+      [src]="post.videoUrl"
+      muted
+      playsinline
+      preload="metadata"
+    ></video>
+  </div>
+
+  <!-- Post de texto -->
+  <div *ngIf="!post.imageUrl && !post.videoUrl" class="text-post-preview">
+    <mat-icon class="text-post-icon">article</mat-icon>
+    <p class="text-content-preview">{{ post.content | slice:0:50 }}{{ post.content.length > 50 ? '...' : '' }}</p>
+  </div>
+</div>
+
       </div>
       <ng-template #noPosts>
         <div class="empty-state">
-          <p>Você ainda não postou nada. 
-            <a routerLink="../../user/create-post" class="create-post-link">Poste algo</a>
-          </p>
+          <mat-icon class="empty-icon">add_photo_alternate</mat-icon>
+          <p>Você ainda não postou nada.</p>
+          <a routerLink="../../user/create-post" class="create-post-link">
+            <mat-icon class="create-icon">add_circle</mat-icon>
+            Poste algo
+          </a>
         </div>
       </ng-template>
     </div>
@@ -74,17 +103,37 @@
 <!-- Modal de seleção de imagem -->
 <div class="modal-backdrop" *ngIf="isModalOpen" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
-    <h3>Escolha sua foto de perfil</h3>
-    
-    <div class="images-grid">
-      <img 
-        *ngFor="let image of calangoImages"
-        [src]="image"
-        class="selectable-image"
-        (click)="selectImage(image)"
-      />
+    <div class="modal-header">
+      <mat-icon class="modal-icon">photo_camera</mat-icon>
+      <h3>Escolha sua foto de perfil</h3>
     </div>
     
-    <button class="close-button" (click)="closeModal()">Fechar</button>
+    <div class="images-grid">
+      <div 
+        *ngFor="let image of calangoImages"
+        class="image-option"
+        (click)="selectImage(image)"
+      >
+        <img 
+          [src]="image"
+          class="selectable-image"
+          [class.selected]="selectedProfileImage === image"
+        />
+        <div class="image-overlay" *ngIf="selectedProfileImage === image">
+          <mat-icon class="selected-icon">check_circle</mat-icon>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-actions">
+      <button class="modal-button secondary" (click)="closeModal()">
+        <mat-icon>close</mat-icon>
+        Cancelar
+      </button>
+      <button class="modal-button primary" (click)="closeModal()" *ngIf="selectedProfileImage">
+        <mat-icon>check</mat-icon>
+        Confirmar
+      </button>
+    </div>
   </div>
 </div>

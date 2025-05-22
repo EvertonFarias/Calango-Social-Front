@@ -78,10 +78,10 @@
     
     <div class="search-results" *ngIf="searchResults.length > 0">
       <div class="search-result-item" *ngFor="let result of searchResults" (click)="selectSearchResult(result)">
-        <img [src]="result.profilePic || 'assets/images/default-avatar.png'" alt="Profile picture" class="result-avatar">
+        <img [src]="result.profilePicture || 'assets/images/default-avatar.png'" alt="Profile picture" class="result-avatar">
         <div class="result-details">
           <span class="result-username">{{result.username}}</span>
-          <span class="result-name">{{result.name}}</span>
+  
         </div>
       </div>
     </div>
@@ -97,10 +97,9 @@
       </div>
       <div class="recent-search-item" *ngFor="let recent of recentSearches">
         <div class="recent-user-info" (click)="selectSearchResult(recent)">
-          <img [src]="recent.profilePic || 'assets/images/default-avatar.png'" alt="Profile picture" class="result-avatar">
+          <img [src]="recent.profilePicture || 'assets/images/default-avatar.png'" alt="Profile picture" class="result-avatar">
           <div class="result-details">
             <span class="result-username">{{recent.username}}</span>
-            <span class="result-name">{{recent.name}}</span>
           </div>
         </div>
         <button class="remove-recent" (click)="removeRecentSearch(recent.id, $event)">

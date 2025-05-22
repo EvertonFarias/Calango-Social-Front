@@ -7,14 +7,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
-import { SearchService } from '../../../services/SearchService';
-
-interface SearchResult {
-  id: string;
-  username: string;
-  name: string;
-  profilePic?: string;
-}
+import { SearchService, SearchResult } from '../../../services/SearchService';
 @Component({
   selector: 'app-auth-header',
   standalone: true, // importante para Standalone Components
@@ -97,8 +90,8 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit {
       return;
     }
     
-    
-    this.searchService.searchUsers(query).subscribe((results: SearchResult[]) => {
+    const currentUserId = this.authService.getUserId() ?? '';
+    this.searchService.searchUsers(query, currentUserId).subscribe((results: SearchResult[]) => {
       this.searchResults = results;
     });
   }
@@ -110,7 +103,7 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit {
 
   selectSearchResult(result: SearchResult): void {
     // Navegar para o perfil do usuário
-    this.router.navigate(['/user/profile', result.username]);
+    this.router.navigate(['/user/profile', result.id]);
     
     // Salvar na lista de pesquisas recentes
     this.addToRecentSearches(result);
