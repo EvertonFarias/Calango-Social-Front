@@ -1,0 +1,1 @@
+import{Cb as o,Db as i,Rb as m,lb as t}from"./chunk-4JIEHJ52.js";var a=class n{static \u0275fac=function(e){return new(e||n)};static \u0275cmp=t({type:n,selectors:[["app-admin"]],decls:2,vars:0,template:function(e,s){e&1&&(o(0,"p"),m(1,"admin works!"),i())},encapsulation:2})};export{a as AdminComponent};
