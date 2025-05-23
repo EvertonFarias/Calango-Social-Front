@@ -48,6 +48,20 @@
   color: #8e8e8e;
   font-size: 0.875rem;
 }
+.user-info p,
+.status-text.own-profile {
+  display: flex;
+  align-items: center;
+  gap: 6px; 
+}
+
+
+.birth-icon {
+  font-size: 18px !important;
+  width: 18px;
+  height: 18px;
+  color: #8e8e8e;
+}
 
 .stats-section {
   display: flex;

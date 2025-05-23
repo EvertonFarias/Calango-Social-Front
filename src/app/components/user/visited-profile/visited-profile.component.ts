@@ -1,52 +1,35 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, of, Subscription } from 'rxjs';
-import { UserDTO } from '../../../services/UserService';
 import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../environment';
 import { FriendshipService, FriendshipStatusResponse } from '../../../services/FriendshipService';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-
-interface Post {
-  id: string;
-  userId: string;
-  username: string;
-  content: string;
-  imageUrl: string | null;
-  videoUrl: string | null;
-  thumbnailUrl?: string | null;
-  createdAt: string;
-  profilePicture: string | null;
-}
+import { PostResponseDto, PostService } from '../../../services/PostService';
+import { PostModalComponent } from '../../utils/post-modal/post-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 interface UserResponseDTO {
   id: string;
   login: string;
-  email: string;
-  role: string;
-  verifiedEmail: boolean;
-  gender: string;
   dateOfBirth: string;
-  enabled: boolean;
   profilePicture: string;
 }
 
 @Component({
   selector: 'app-visited-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule,  MatIconModule,
-    MatMenuModule,
-    MatButtonModule],
+  imports: [CommonModule, MatIconModule, MatMenuModule, MatButtonModule],
   templateUrl: './visited-profile.component.html',
   styleUrls: ['./visited-profile.component.css']
 })
 export class VisitedProfileComponent implements OnInit, OnDestroy {
   visitedUser: UserResponseDTO | null = null;
-  posts: Post[] = [];
+  posts: PostResponseDto[] = [];
   friendsCount: number = 0;
   friendshipStatus: FriendshipStatusResponse = {
     isFriend: false,
@@ -62,7 +45,9 @@ export class VisitedProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private friendshipService: FriendshipService,
-    private http: HttpClient
+    private http: HttpClient,
+    private postService: PostService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -113,13 +98,7 @@ export class VisitedProfileComponent implements OnInit, OnDestroy {
   }
 
   private loadUserPosts(userId: string): void {
-    const token = this.authService.getToken();
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    this.http.get<Post[]>(`${environment.apiUrl}/api/users/${userId}/posts`, { headers })
+    this.postService.getPostsByUser(userId)
       .pipe(
         catchError(error => {
           console.error('Erro ao carregar posts:', error);
@@ -127,12 +106,7 @@ export class VisitedProfileComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(posts => {
-        this.posts = posts.map(post => {
-          if (post.videoUrl && !post.thumbnailUrl) {
-            post.thumbnailUrl = 'assets/video-thumbnail-placeholder.jpg';
-          }
-          return post;
-        });
+        this.posts = posts;
       });
   }
 
@@ -151,40 +125,32 @@ export class VisitedProfileComponent implements OnInit, OnDestroy {
   }
 
   acceptFriendRequest(): void {
-    if (!this.friendshipStatus.friendshipId) {
-      return;
-    }
+    if (!this.friendshipStatus.friendshipId) return;
 
     this.friendshipService.acceptFriendRequest(this.friendshipStatus.friendshipId)
       .subscribe(response => {
         if (response) {
           this.friendshipStatus.isFriend = true;
           this.friendshipStatus.isPending = false;
-          this.loadFriendsCount(this.visitedUser!.id); // Atualizar contagem
-          console.log('Solicitação de amizade aceita');
+          this.loadFriendsCount(this.visitedUser!.id);
         }
       });
   }
 
   declineFriendRequest(): void {
-    if (!this.friendshipStatus.friendshipId) {
-      return;
-    }
+    if (!this.friendshipStatus.friendshipId) return;
 
     this.friendshipService.declineFriendRequest(this.friendshipStatus.friendshipId)
       .subscribe(response => {
         if (response) {
           this.friendshipStatus.isPending = false;
           this.friendshipStatus.friendshipId = undefined;
-          console.log('Solicitação de amizade recusada');
         }
       });
   }
 
   addFriend(): void {
-    if (!this.visitedUser || this.friendshipStatus.isPending || this.friendshipStatus.isFriend) {
-      return;
-    }
+    if (!this.visitedUser || this.friendshipStatus.isPending || this.friendshipStatus.isFriend) return;
 
     this.friendshipService.sendFriendRequest(this.visitedUser.id)
       .subscribe(response => {
@@ -192,15 +158,12 @@ export class VisitedProfileComponent implements OnInit, OnDestroy {
           this.friendshipStatus.isPending = true;
           this.friendshipStatus.isRequestSender = true;
           this.friendshipStatus.friendshipId = response.id;
-          console.log('Solicitação de amizade enviada com sucesso');
         }
       });
   }
 
   removeFriend(): void {
-    if (!this.visitedUser || !this.friendshipStatus.isFriend || !this.friendshipStatus.friendshipId) {
-      return;
-    }
+    if (!this.visitedUser || !this.friendshipStatus.isFriend || !this.friendshipStatus.friendshipId) return;
 
     this.friendshipService.deleteFriendship(this.friendshipStatus.friendshipId)
       .subscribe(success => {
@@ -208,16 +171,13 @@ export class VisitedProfileComponent implements OnInit, OnDestroy {
           this.friendshipStatus.isFriend = false;
           this.friendshipStatus.isPending = false;
           this.friendshipStatus.friendshipId = undefined;
-          this.loadFriendsCount(this.visitedUser!.id); // Atualizar contagem
-          console.log('Amigo removido com sucesso');
+          this.loadFriendsCount(this.visitedUser!.id);
         }
       });
   }
 
   cancelFriendRequest(): void {
-    if (!this.visitedUser || !this.friendshipStatus.isPending || !this.friendshipStatus.friendshipId) {
-      return;
-    }
+    if (!this.visitedUser || !this.friendshipStatus.isPending || !this.friendshipStatus.friendshipId) return;
 
     this.friendshipService.deleteFriendship(this.friendshipStatus.friendshipId)
       .subscribe(success => {
@@ -225,42 +185,46 @@ export class VisitedProfileComponent implements OnInit, OnDestroy {
           this.friendshipStatus.isPending = false;
           this.friendshipStatus.friendshipId = undefined;
           this.friendshipStatus.isRequestSender = false;
-          console.log('Solicitação de amizade cancelada');
         }
       });
   }
 
-  navigateToFullPost(postId: string): void {
-    this.router.navigate(['user/post', postId]);
+  openPostModal(post: PostResponseDto): void {
+    this.dialog.open(PostModalComponent, {
+      data: post,
+      width: '90vw',
+      maxWidth: '900px',
+      height: '85vh',
+      maxHeight: '85vh',
+      panelClass: 'custom-post-modal',
+      hasBackdrop: true,
+      disableClose: false
+    });
   }
 
   getProfileImage(): string {
-    if (this.visitedUser?.profilePicture && 
-        typeof this.visitedUser.profilePicture === 'string' && 
-        this.visitedUser.profilePicture.trim() !== '') {
+    if (this.visitedUser?.profilePicture?.trim()) {
       return this.visitedUser.profilePicture;
     }
     return 'img/calangos/default.png';
   }
 
   getButtonText(): string {
-    if (this.friendshipStatus.isFriend) {
-      return 'Remover Amigo';
-    } else if (this.friendshipStatus.isPending) {
-      return 'Cancelar Solicitação';
-    } else {
-      return 'Adicionar Amigo';
-    }
+    if (this.friendshipStatus.isFriend) return 'Remover Amigo';
+    if (this.friendshipStatus.isPending) return 'Cancelar Solicitação';
+    return 'Adicionar Amigo';
   }
 
   getButtonClass(): string {
-    if (this.friendshipStatus.isFriend) {
-      return 'friend-button remove-friend';
-    } else if (this.friendshipStatus.isPending) {
-      return 'friend-button pending';
-    } else {
-      return 'friend-button add-friend';
-    }
+    if (this.friendshipStatus.isFriend) return 'friend-button remove-friend';
+    if (this.friendshipStatus.isPending) return 'friend-button pending';
+    return 'friend-button add-friend';
+  }
+
+  getButtonIcon(): string {
+    if (this.friendshipStatus.isFriend) return 'person_remove';
+    if (this.friendshipStatus.isPending && this.friendshipStatus.isRequestSender) return 'cancel';
+    return 'person_add';
   }
 
   onFriendButtonClick(): void {
@@ -272,19 +236,4 @@ export class VisitedProfileComponent implements OnInit, OnDestroy {
       this.addFriend();
     }
   }
-  getButtonIcon(): string {
-  if (this.friendshipStatus.isFriend) {
-    return 'person_remove'; // Ícone para remover amigo
-  } else if (this.friendshipStatus.isPending && this.friendshipStatus.isRequestSender) {
-    return 'cancel'; // Ícone para cancelar solicitação enviada
-  } else {
-    return 'person_add'; // Ícone para adicionar amigo
-  }
-}
-
-
-
-
-
-
 }

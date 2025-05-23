@@ -1,35 +1,81 @@
-<div class="feed-container" *ngIf="!isLoading; else loading">
-  <div *ngFor="let post of posts" class="post-card">
-    <div class="post-header">
-      <img [src]="post.profilePicture || 'img/calangos/default.png'" alt="Avatar" class="avatar" (click)="navigateToProfile(post.userId)">
-      <div>
-        <strong (click)="navigateToProfile(post.userId)">{{ post.username }}</strong>
-        <div class="timestamp">{{ post.createdAt | date: 'short' }}</div>
+<!-- feed.component.html -->
+<div class="feed-container" *ngIf="!isLoading; else loading">   
+  <div *ngFor="let post of posts" class="post-card">     
+    <div class="post-header">       
+      <img 
+        [src]="post.profilePicture || 'img/calangos/default.png'" 
+        alt="Avatar" 
+        class="avatar" 
+        (click)="navigateToProfile(post.userId)">       
+      <div>         
+        <strong (click)="navigateToProfile(post.userId)" class="username-link">
+          {{ post.username }}
+        </strong>         
+        <div class="timestamp">{{ post.createdAt | date: 'short' }}</div>       
+      </div>     
+    </div>      
+
+    <div class="post-content">       
+      <p>{{ post.content }}</p>       
+      
+      <!-- Imagem do Post -->
+      <img 
+        *ngIf="post.imageUrl" 
+        [src]="post.imageUrl" 
+        class="post-media" 
+        alt="Post Image"
+        (click)="openPostModal(post)">
+      
+      <!-- Vídeo do Post -->       
+      <div *ngIf="post.videoUrl" class="video-container">         
+        <video 
+          width="100%" 
+          controls 
+          [poster]="post.thumbnailUrl" 
+          playsinline
+          (click)="openPostModal(post)">           
+          <source [src]="post.videoUrl" type="video/mp4">           
+          Seu navegador não suporta vídeo.         
+        </video>       
+      </div>     
+    </div>      
+
+    <div class="post-actions">     
+      <div class="action-buttons">
+        <!-- Botão de curtir -->
+        <button 
+          mat-button 
+          class="action-btn like-btn"
+          (click)="likePost(post.id)">
+          <mat-icon color="warn">thumb_up</mat-icon> 
+          <span>{{ post.likesCount }}</span>
+        </button>
+        
+        <!-- Botão de comentar -->
+        <button 
+          mat-button 
+          class="action-btn comment-btn"
+          (click)="commentOnPost(post.id)">
+          <mat-icon color="primary">chat</mat-icon> 
+          <span>{{ post.commentsCount }}</span>
+        </button>
       </div>
-    </div>
+      
+      <!-- Botão Ver mais - abre o modal -->
+      <button 
+        mat-stroked-button 
+        color="primary" 
+        (click)="openPostModal(post)"
+        class="view-more-btn">
+        Ver mais
+      </button>     
+    </div>    
+  </div> 
+</div>  
 
-    <div class="post-content">
-      <p>{{ post.content }}</p>
-      <img *ngIf="post.imageUrl" [src]="post.imageUrl" class="post-media" alt="Post Image">
-      <div *ngIf="post.videoUrl" class="video-container">
-        <video width="100%" controls [poster]="post.thumbnailUrl" playsinline>
-          <source [src]="post.videoUrl" type="video/mp4">
-          Seu navegador não suporta vídeo.
-        </video>
-      </div>
-    </div>
-
-    <div class="post-actions">
-    <span class="material-symbols-outlined">
-        <mat-icon class="likeButton" color="warn">thumb_up</mat-icon> {{ post.likesCount }}
-        <mat-icon class="commentButton comment-icon" color="primary">chat</mat-icon> {{ post.commentsCount }}
-    </span>
-    <button mat-stroked-button color="primary" (click)="navigateToPost(post.id)">Ver mais</button>
-    </div>
-
-  </div>
-</div>
-
-<ng-template #loading>
-  <div class="loading">Carregando feed...</div>
+<ng-template #loading>   
+  <div class="loading">
+    <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+    <p>Carregando feed...</p>
+  </div> 
 </ng-template>

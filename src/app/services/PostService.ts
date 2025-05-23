@@ -17,7 +17,9 @@ export interface PostResponseDto {
   content: string;
   imageUrl: string | null;
   videoUrl: string | null;
+  profilePicture: string;
   createdAt: string;
+  thumbnailUrl?: string | null;
 }
 
 @Injectable({
@@ -39,8 +41,6 @@ export class PostService {
   }
 
   createPost(post: PostRequestDto): Observable<PostResponseDto> {
-    console.log('Enviando post para:', this.apiUrl);
-    console.log('Dados:', post);
     return this.http.post<PostResponseDto>(this.apiUrl, post, {
       headers: this.getAuthHeaders()
     });
@@ -52,10 +52,16 @@ export class PostService {
     });
   }
 
+  getPostsByUser(userId: string): Observable<PostResponseDto[]> {
+    return this.http.get<PostResponseDto[]>(
+      `${environment.apiUrl}/api/users/${userId}/posts`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   deletePost(postId: string, userId: string) {
     return this.http.delete(`${this.apiUrl}/${postId}/users/${userId}`, {
       headers: this.getAuthHeaders()
     });
   }
-
 }
