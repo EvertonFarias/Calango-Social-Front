@@ -1,123 +1,210 @@
-section{
-    margin-top: 30px;
-}	
 
-.content-container{
-    width: 500px;
-    border: 1px solid rgba(237, 168, 168, 0.047);
-    height: 500px;
-
+::ng-deep main {
+  min-height: 100vh;
+  padding-top: 100px;
 }
-
-.form-container{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 1rem;
-    border: 1px solid rgba(0, 0, 0, 0.047);
-    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    background-color: white;
-    padding: 30px 50px;
-    
-    
-    
+::ng-deep footer {
+    margin-top: 100px;
 }
 
 
-
-form{
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    min-width: 400px;
-
+.section-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 100px;
 }
 
-input{
-    padding: 0.5rem;
-    border-radius: 5px;
-    border: solid 1px #ccc;
-    font-size: 1rem;
-    outline: none;
-    transition: all 0.3s ease-in-out;
-}   
-
-label{
-    font-size: 1rem;
-    color: #747272;
-    font-size: 14px;
-    font-weight: 500;
-}
-h2{
-    font-size: 30px;
-    color: #1F2937;
-    margin-bottom: 0;
-
-
-
+/* Centraliza o container do formulário */
+.form-container {
+  background: #fff;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 123, 255, 0.08), 0 1.5px 4px rgba(0,0,0,0.04);
+  max-width: 400px;
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-div#title {
-    padding: 10px;
-
-    width: 80%;
-    text-align: center;
+/* Centraliza o título */
+#title {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
-input {
-    padding: 0.75rem;
+.input-group {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+/* Garante que select e input tenham o mesmo tamanho */
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  background: #f9fbfd;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Adiciona seta customizada ao select */
+.input-group select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,<svg width='16' height='16' fill='gray' xmlns='http://www.w3.org/2000/svg'><path d='M4 6l4 4 4-4'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.2em;
+  cursor: pointer;
+}
+
+/* Foco */
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  background: #f0f8ff;
+}
+
+/* Erro */
+.input-group input.error,
+.input-group select.error {
+  border-color: #dc3545;
+  background-color: #fff5f5;
+}
+
+.input-group input.error:focus,
+.input-group select.error:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+.info-text {
+  color: #6c757d;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.password-requirements {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 4px;
+}
+
+.password-requirements small {
+  font-weight: 600;
+  color: #856404;
+}
+
+.password-requirements ul {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.25rem;
+}
+
+.password-requirements li.password-error {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.password-strength-ok {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #d1edff;
+  border: 1px solid #bee5eb;
+  border-radius: 4px;
+}
+
+.password-strength-ok small {
+  color: #155724;
+  font-weight: 600;
+}
+
+/* Centraliza o botão e ajusta largura */
+.btn-primary {
+  background: #2F80ED;
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 80%;
+  margin: 1.5rem auto 0 auto;
+  display: block;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:not(:disabled):hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Centraliza o link de login */
+p {
+  width: 100%;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.text-link {
+  color: #007bff;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Responsividade */
+@media (max-width: 500px) {
+  .form-container {
+    padding: 1.5rem 0.5rem;
     border-radius: 8px;
-    border: 1px solid #ccc;
+    max-width: 98vw;
+  }
+  .btn-primary {
+    width: 100%;
     font-size: 1rem;
-    outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    background-color: #f9fafb;
-    color: #374151;
-}
-
-/* Estilo do texto do placeholder */
-input::placeholder {
-    font-size: 12px;
-}
-
-
-input:hover {
-    border-color: #3b82f6;
-}
-
-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-}
-
-.btn{
-    padding: 0.6rem 1.5rem;
-    font-weight: bold;
-    text-decoration: none;
-    transition: background-color 0.3s, color 0.3s, transform 0.2s;
-    font-size: 0.95rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    background-color: #2F80ED;
-    color: white;
-    
-}
-
-.btn:hover{
-    background-color: #1d5bb0;
-    border-color: #1d5bb0;
-    transform: translateY(-2px);
-}
-
-#login-link{
-    text-decoration: none;
-    color: #2F80ED;
-    font-weight: bold;
-    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+  }
 }

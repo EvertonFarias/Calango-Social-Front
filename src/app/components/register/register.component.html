@@ -3,27 +3,126 @@
     <div id="title">
       <h2>Crie sua conta</h2>
     </div>
+    
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Nome de usuário -->
+      <div class="input-group">
+        <input 
+          formControlName="login" 
+          type="text" 
+          placeholder="Nome de usuário"
+          [class.error]="isFieldInvalid('login')"
+          (input)="formatUsername($event)"
+          required>
+        <div class="error-message" *ngIf="getFieldError('login')">
+          {{ getFieldError('login') }}
+        </div>
+        <div class="info-text">
+          <small>Deve começar com uma letra e pode conter letras, números e underscore</small>
+        </div>
+      </div>
 
-      <input formControlName="login" type="text" placeholder="Nome de usuário" required>
+      <!-- Data de nascimento -->
+      <div class="input-group">
+        <label for="dateOfBirth">Data de nascimento</label>
+        <input 
+          formControlName="dateOfBirth" 
+          type="date" 
+          id="dateOfBirth"
+          [max]="maxDate"
+          [min]="minDate"
+          [class.error]="isFieldInvalid('dateOfBirth')"
+          required>
+        <div class="error-message" *ngIf="getFieldError('dateOfBirth')">
+          {{ getFieldError('dateOfBirth') }}
+        </div>
+        <div class="info-text" *ngIf="calculateAge() !== null && !getFieldError('dateOfBirth')">
+          Idade: {{ calculateAge() }} anos
+        </div>
+      </div>
 
-      <label for="dateOfBirth">Data de nascimento</label>
-      <input formControlName="dateOfBirth" type="date" id="dateOfBirth" required>
+      <!-- Gênero -->
+      <div class="input-group">
+        <label for="gender">Gênero</label>
+        <select 
+          formControlName="gender" 
+          id="gender"
+          [class.error]="isFieldInvalid('gender')"
+          required>
+          <option value="" disabled>Selecione</option>
+          <option value="male">Masculino</option>
+          <option value="female">Feminino</option>
+          <option value="other">Outro</option>
+        </select>
+        <div class="error-message" *ngIf="getFieldError('gender')">
+          {{ getFieldError('gender') }}
+        </div>
+      </div>
 
-      <label for="gender">Gênero</label>
-      <select formControlName="gender" id="gender" required>
-        <option value="" disabled selected>Selecione</option>
-        <option value="male">Masculino</option>
-        <option value="female">Feminino</option>
-        <option value="other">Outro</option>
-      </select>
+      <!-- Email -->
+      <div class="input-group">
+        <input 
+          formControlName="email" 
+          type="email" 
+          placeholder="example@example.com"
+          [class.error]="isFieldInvalid('email')"
+          required>
+        <div class="error-message" *ngIf="getFieldError('email')">
+          {{ getFieldError('email') }}
+        </div>
+      </div>
 
-      <input formControlName="email" type="email" placeholder="example@example.com" required>
-      <input formControlName="password" type="password" placeholder="Senha" required>
-      <input formControlName="confirmPassword" type="password" placeholder="Confirme sua Senha" required>
+      <!-- Senha -->
+      <div class="input-group">
+        <input 
+          formControlName="password" 
+          type="password" 
+          placeholder="Senha (mín. 8 caracteres)"
+          [class.error]="isFieldInvalid('password')"
+          required>
+        <div class="error-message" *ngIf="getFieldError('password') && !getPasswordErrors().length">
+          {{ getFieldError('password') }}
+        </div>
+        <div class="password-requirements" *ngIf="registerForm.get('password')?.value && getPasswordErrors().length > 0">
+          <small>A senha deve conter:</small>
+          <ul>
+            <li *ngFor="let error of getPasswordErrors()" class="password-error">{{ error }}</li>
+          </ul>
+        </div>
+        <div class="password-strength-ok" *ngIf="registerForm.get('password')?.value && getPasswordErrors().length === 0 && registerForm.get('password')?.value.length >= 8">
+          <small>✓ Senha forte!</small>
+        </div>
+      </div>
 
-      <button type="submit" class="btn" [disabled]="registerForm.invalid">Registrar</button>
+      <!-- Confirmar senha -->
+      <div class="input-group">
+        <input 
+          formControlName="confirmPassword" 
+          type="password" 
+          placeholder="Confirme sua Senha"
+          [class.error]="getConfirmPasswordError() !== null"
+          required>
+        <div class="error-message" *ngIf="getConfirmPasswordError()">
+          {{ getConfirmPasswordError() }}
+        </div>
+      </div>
+
+      <!-- Botão de Cadastro -->
+      <button 
+        type="submit" 
+        class="btn btn-primary" 
+        [disabled]="registerForm.invalid || registerForm.disabled">
+        <span *ngIf="!registerForm.disabled">
+          <i class="icon-user-plus" aria-hidden="true"></i>
+          Criar Conta
+        </span>
+        <span *ngIf="registerForm.disabled">
+          <i class="icon-spinner" aria-hidden="true"></i>
+          Criando conta...
+        </span>
+      </button>
     </form>
+    
     <p>Já tem uma conta? <a class="text-link" routerLink="/auth/login">Iniciar sessão</a></p>
   </div>
 </section>

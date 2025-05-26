@@ -1,16 +1,19 @@
-import { Component, ElementRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { SearchService, SearchResult } from '../../../services/SearchService';
+import { NotificationService } from '../../../services/Notification.service';
+import { UserDTO, UserService } from '../../../services/UserService';
+
 @Component({
   selector: 'app-auth-header',
-  standalone: true, // importante para Standalone Components
+  standalone: true,
   imports: [
     RouterModule,
     MatIconModule,
@@ -18,27 +21,30 @@ import { SearchService, SearchResult } from '../../../services/SearchService';
     MatButtonModule,
     CommonModule,
     FormsModule
-    
   ],
   templateUrl: './auth-header.component.html',
   styleUrls: ['./auth-header.component.css']
 })
-export class AuthHeaderComponent implements OnInit, AfterViewInit {
+export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   isSearchActive = false;
   searchQuery = '';
   searchResults: SearchResult[] = [];
   recentSearches: SearchResult[] = [];
-  
+  hasUnreadNotifications = false;
+  currentUser: UserDTO | null = null;
+
   @ViewChild('searchInput') searchInput!: ElementRef;
   
   private searchSubject = new Subject<string>();
+  private userSubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
+    private userService: UserService,
     private router: Router,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private notificationService: NotificationService
   ) {
-    // Configura o debounce para evitar múltiplas chamadas à API
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged()
@@ -48,14 +54,32 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    // Carrega pesquisas recentes do localStorage na inicialização
     this.loadRecentSearches();
+
+    // Carrega os dados do usuário atual
+    this.userSubscription = this.userService.user$.subscribe(user => {
+      this.currentUser = user;
+    });
+
+    const userId = this.authService.getUserId();
+    if (userId) {
+      this.notificationService.connect(userId);
+
+      this.notificationService.newNotification$.subscribe(notification => {
+        this.hasUnreadNotifications = true;
+      });
+    }
   }
 
   ngAfterViewInit(): void {
-    // Focará o input automaticamente quando o painel de pesquisa abrir
     if (this.isSearchActive && this.searchInput) {
       setTimeout(() => this.searchInput.nativeElement.focus(), 0);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
     }
   }
 
@@ -64,7 +88,6 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit {
     this.isSearchActive = !this.isSearchActive;
     
     if (this.isSearchActive) {
-      
       setTimeout(() => {
         if (this.searchInput) {
           this.searchInput.nativeElement.focus();
@@ -102,29 +125,19 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit {
   }
 
   selectSearchResult(result: SearchResult): void {
-    // Navegar para o perfil do usuário
     this.router.navigate(['/user/profile', result.id]);
-    
-    // Salvar na lista de pesquisas recentes
     this.addToRecentSearches(result);
-    
-    // Fechar o painel de pesquisa
     this.closeSearch();
   }
 
   addToRecentSearches(result: SearchResult): void {
-    // Remover se já existir para evitar duplicatas
     this.recentSearches = this.recentSearches.filter(item => item.id !== result.id);
-    
-    // Adicionar ao início da lista
     this.recentSearches.unshift(result);
     
-    // Manter apenas os 10 mais recentes
     if (this.recentSearches.length > 10) {
       this.recentSearches = this.recentSearches.slice(0, 10);
     }
     
-    // Salvar no localStorage
     localStorage.setItem('recentSearches', JSON.stringify(this.recentSearches));
   }
 
@@ -141,9 +154,7 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit {
   }
 
   removeRecentSearch(id: string, event: Event): void {
-    // Impedir propagação do evento para não acionar o clique no item
     event.stopPropagation();
-    
     this.recentSearches = this.recentSearches.filter(item => item.id !== id);
     localStorage.setItem('recentSearches', JSON.stringify(this.recentSearches));
   }
@@ -153,7 +164,17 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit {
     localStorage.removeItem('recentSearches');
   }
 
+  getUserProfilePicture(): string {
+    return this.currentUser?.profilePicture || 'img/calangos/default.png';
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    target.src = 'img/calangos/default.png';
+  }
+
   logout(): void {
+    this.notificationService.disconnect();
     this.authService.logout();
     this.router.navigate(['auth/login']);
   }

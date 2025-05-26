@@ -328,3 +328,69 @@ h1 {
   font-size: 20px;
   line-height: 1;
 }
+
+
+.notification-icon {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 6px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+}
+/* Estilo para a foto de perfil na sidebar */
+.profile-picture {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  flex-shrink: 0; /* Previne o redimensionamento da imagem */
+}
+
+/* Hover effect para a foto de perfil */
+.menu-list li a:hover .profile-picture {
+  border-color: #2F80ED;
+  transform: scale(1.05);
+}
+
+/* Ajuste quando a sidebar está no modo icon-only */
+.menu-list li a.icon-only .profile-picture {
+  width: 24px;
+  height: 24px;
+}
+
+/* Active state para o link do perfil */
+.menu-list li a.active .profile-picture {
+  border-color: #2F80ED;
+  box-shadow: 0 0 0 2px rgba(47, 128, 237, 0.2);
+}
+
+/* Fallback para quando a imagem não carregar */
+.profile-picture[src="/img/calangos/default.png"],
+.profile-picture[src*="default"] {
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+}
+
+/* Ensure proper spacing in the profile menu item */
+.menu-list li a[routerLink="/user/profile"] {
+  align-items: center;
+}
+
+/* Animation quando a sidebar transiciona */
+.sidebar-container:not(.expanded-search) .profile-picture {
+  width: 20px;
+  height: 20px;
+}
+
+.sidebar-container.expanded-search .profile-picture {
+  width: 24px;
+  height: 24px;
+}

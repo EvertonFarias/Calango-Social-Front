@@ -22,7 +22,8 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
 import { environment } from './environment';
 import { UserProfileComponent } from './app/components/user/user-profile/user-profile.component';
 import { VisitedProfileComponent } from './app/components/user/visited-profile/visited-profile.component';
-import { UserPostComponent } from './app/components/user/user-post/user-post.component';
+
+(window as any).global = window;
 
 
 
@@ -72,11 +73,7 @@ const routes = [
     component: CreatePostComponent,
     canActivate: [AuthGuard,EmailVerifiedGuard]
   },
-  {
-    path: 'user/post/:id',
-    component: UserPostComponent,
-    canActivate: [AuthGuard,EmailVerifiedGuard]
-  },
+
   {
     path: 'user/profile',
     component: UserProfileComponent,

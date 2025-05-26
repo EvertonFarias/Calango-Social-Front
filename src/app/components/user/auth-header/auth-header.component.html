@@ -30,12 +30,13 @@
       </li>
       
       <li>
-        <a routerLink="user/notifications" [class.icon-only]="isSearchActive">
-          <span class="material-symbols-outlined">notifications</span>
+        <a routerLink="user/notifications" [class.icon-only]="isSearchActive" (click)="hasUnreadNotifications = false">
+          <span class="material-symbols-outlined notification-icon">notifications</span>
+          <span *ngIf="hasUnreadNotifications" class="notification-badge"></span>
           <span class="menu-text" *ngIf="!isSearchActive">Notificações</span>
         </a>
       </li>
-      
+
       <li>
         <a routerLink="/user/create-post" [class.icon-only]="isSearchActive">
           <span class="material-symbols-outlined">add</span>
@@ -45,7 +46,11 @@
       
       <li>
         <a routerLink="/user/profile" [class.icon-only]="isSearchActive">
-          <span class="material-symbols-outlined">person</span>
+          <img 
+            [src]="getUserProfilePicture()" 
+            alt="Foto de perfil" 
+            class="profile-picture"
+            (error)="onImageError($event)">
           <span class="menu-text" *ngIf="!isSearchActive">Perfil</span>
         </a>
       </li>
@@ -78,10 +83,9 @@
     
     <div class="search-results" *ngIf="searchResults.length > 0">
       <div class="search-result-item" *ngFor="let result of searchResults" (click)="selectSearchResult(result)">
-        <img [src]="result.profilePicture || 'assets/images/default-avatar.png'" alt="Profile picture" class="result-avatar">
+        <img [src]="result.profilePicture || '/img/calangos/default.png'" alt="Profile picture" class="result-avatar">
         <div class="result-details">
           <span class="result-username">{{result.username}}</span>
-  
         </div>
       </div>
     </div>
@@ -97,7 +101,7 @@
       </div>
       <div class="recent-search-item" *ngFor="let recent of recentSearches">
         <div class="recent-user-info" (click)="selectSearchResult(recent)">
-          <img [src]="recent.profilePicture || 'assets/images/default-avatar.png'" alt="Profile picture" class="result-avatar">
+          <img [src]="recent.profilePicture || 'img/calangos/default.png.png'" alt="Profile picture" class="result-avatar">
           <div class="result-details">
             <span class="result-username">{{recent.username}}</span>
           </div>
