@@ -219,7 +219,7 @@ onImageSelected(event: Event): void {
                     timer: 2500,
                     timerProgressBar: true
                   }).then(() => {
-                    this.router.navigate([`/user/post/${response.id}`]);
+                    this.router.navigate([`/user/home`]);
                   });
          
       },

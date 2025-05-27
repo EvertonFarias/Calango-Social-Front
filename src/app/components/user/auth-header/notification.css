@@ -9,6 +9,9 @@
   align-items: center;
 }
 
+
+
+
 .notification-badge {
   position: absolute;
   top: -6px;
@@ -167,7 +170,6 @@
 }
 
 .notification-icon {
-  margin-right: 12px;
   margin-top: 4px;
 }
 

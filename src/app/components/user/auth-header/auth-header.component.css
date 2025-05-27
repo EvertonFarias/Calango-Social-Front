@@ -106,16 +106,6 @@ h1 {
 
 
 
-.notification-icon {
-  position: relative;
-}
 
-.notification-badge {
-  position: absolute;
-  top: 6px;
-  right: 2px;
-  width: 10px;
-  height: 10px;
-  background-color: red;
-  border-radius: 50%;
-}
+
+

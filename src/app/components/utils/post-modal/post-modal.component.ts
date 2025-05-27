@@ -47,7 +47,7 @@ export interface CurrentUser {
     MatMenuModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule, // <- IMPORTANTE: Este precisa estar aqui
+    MatInputModule, 
     MatProgressSpinnerModule
   ]
 })

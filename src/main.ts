@@ -79,6 +79,7 @@ const routes = [
     component: UserProfileComponent,
     canActivate: [AuthGuard, EmailVerifiedGuard]
   },
+
   {
     path: 'user/profile/:id',
     component: VisitedProfileComponent ,

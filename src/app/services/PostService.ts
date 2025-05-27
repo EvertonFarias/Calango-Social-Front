@@ -14,12 +14,16 @@ export interface PostRequestDto {
 export interface PostResponseDto {
   id: string;
   userId: string;
+  username: string;          // ← Adicionar
   content: string;
   imageUrl: string | null;
   videoUrl: string | null;
   profilePicture: string;
   createdAt: string;
   thumbnailUrl?: string | null;
+  likesCount: number;        // ← Adicionar
+  commentsCount: number;     // ← Adicionar
+  isLiked: boolean;          // ← Adicionar
 }
 
 @Injectable({
@@ -52,6 +56,14 @@ export class PostService {
     });
   }
 
+
+  getPostById(postId: string): Observable<PostResponseDto> {
+    return this.http.get<PostResponseDto>(
+      `${environment.apiUrl}/api/users/posts/${postId}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+  
   getPostsByUser(userId: string): Observable<PostResponseDto[]> {
     return this.http.get<PostResponseDto[]>(
       `${environment.apiUrl}/api/users/${userId}/posts`,
