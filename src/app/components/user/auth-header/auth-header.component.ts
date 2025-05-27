@@ -8,8 +8,8 @@ import { AuthService } from '../../../services/auth.service';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { SearchService, SearchResult } from '../../../services/SearchService';
-import { NotificationService } from '../../../services/Notification.service';
 import { UserDTO, UserService } from '../../../services/UserService';
+import { NotificationDTO, NotificationService, NotificationType } from '../../../services/Notification.service';
 
 @Component({
   selector: 'app-auth-header',
@@ -23,20 +23,26 @@ import { UserDTO, UserService } from '../../../services/UserService';
     FormsModule
   ],
   templateUrl: './auth-header.component.html',
-  styleUrls: ['./auth-header.component.css']
+  styleUrls: ['./auth-header.component.css', './notification.css', './search.css', './profile-picture.css'],
 })
 export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   isSearchActive = false;
   searchQuery = '';
   searchResults: SearchResult[] = [];
   recentSearches: SearchResult[] = [];
+  
+  // Propriedades de notificação
+  notifications: NotificationDTO[] = [];
+  unreadNotificationsCount = 0;
   hasUnreadNotifications = false;
+  showNotificationPanel = false;
+  
   currentUser: UserDTO | null = null;
 
   @ViewChild('searchInput') searchInput!: ElementRef;
   
   private searchSubject = new Subject<string>();
-  private userSubscription?: Subscription;
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private authService: AuthService,
@@ -55,20 +61,8 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadRecentSearches();
-
-    // Carrega os dados do usuário atual
-    this.userSubscription = this.userService.user$.subscribe(user => {
-      this.currentUser = user;
-    });
-
-    const userId = this.authService.getUserId();
-    if (userId) {
-      this.notificationService.connect(userId);
-
-      this.notificationService.newNotification$.subscribe(notification => {
-        this.hasUnreadNotifications = true;
-      });
-    }
+    this.initializeUser();
+    this.initializeNotifications();
   }
 
   ngAfterViewInit(): void {
@@ -78,14 +72,49 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.userSubscription) {
-      this.userSubscription.unsubscribe();
-    }
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.notificationService.disconnect();
   }
 
+  private initializeUser(): void {
+    const userSub = this.userService.user$.subscribe(user => {
+      this.currentUser = user;
+    });
+    this.subscriptions.push(userSub);
+  }
+
+  private initializeNotifications(): void {
+    const userId = this.authService.getUserId();
+    if (!userId) return;
+
+    // Conecta ao WebSocket
+    this.notificationService.connect(userId);
+
+    // Subscreve às notificações
+    const notificationsSub = this.notificationService.notifications$.subscribe(notifications => {
+      this.notifications = notifications;
+    });
+
+    // Subscreve ao contador de não lidas
+    const unreadCountSub = this.notificationService.unreadCount$.subscribe(count => {
+      this.unreadNotificationsCount = count;
+      this.hasUnreadNotifications = count > 0;
+    });
+
+    // Subscreve a novas notificações (para efeitos visuais adicionais se necessário)
+    const newNotificationSub = this.notificationService.newNotification$.subscribe(notification => {
+      // Aqui você pode adicionar lógica adicional quando uma nova notificação chegar
+      console.log('Nova notificação recebida:', notification);
+    });
+
+    this.subscriptions.push(notificationsSub, unreadCountSub, newNotificationSub);
+  }
+
+  // Métodos de Search (mantidos do código original)
   toggleSearch(event: Event): void {
     event.preventDefault();
     this.isSearchActive = !this.isSearchActive;
+    this.showNotificationPanel = false; // Fecha painel de notificações
     
     if (this.isSearchActive) {
       setTimeout(() => {
@@ -164,6 +193,139 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     localStorage.removeItem('recentSearches');
   }
 
+  // Métodos de Notificação
+  toggleNotificationPanel(): void {
+    this.showNotificationPanel = !this.showNotificationPanel;
+    this.isSearchActive = false; // Fecha painel de busca
+    
+    if (this.showNotificationPanel && this.hasUnreadNotifications) {
+      // Marca todas como lidas quando abre o painel
+      this.markAllNotificationsAsRead();
+    }
+  }
+
+  closeNotificationPanel(): void {
+    this.showNotificationPanel = false;
+  }
+
+  markAllNotificationsAsRead(): void {
+    const userId = this.authService.getUserId();
+    if (!userId) return;
+
+    this.notificationService.markAllAsRead(userId).subscribe({
+      next: () => {
+        // Atualiza localmente
+        this.notifications = this.notifications.map(n => ({ ...n, isRead: true }));
+        this.hasUnreadNotifications = false;
+        this.unreadNotificationsCount = 0;
+      },
+      error: (error) => {
+        console.error('Erro ao marcar notificações como lidas:', error);
+      }
+    });
+  }
+
+  markNotificationAsRead(notification: NotificationDTO): void {
+    if (notification.isRead) return;
+
+    this.notificationService.markAsRead(notification.id).subscribe({
+      next: () => {
+        this.notificationService.updateNotificationAsRead(notification.id);
+      },
+      error: (error) => {
+        console.error('Erro ao marcar notificação como lida:', error);
+      }
+    });
+  }
+
+  deleteNotification(notification: NotificationDTO, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+
+    const userId = this.authService.getUserId();
+    if (!userId) return;
+
+    this.notificationService.deleteNotification(notification.id, userId).subscribe({
+      next: () => {
+        this.notificationService.removeNotificationLocally(notification.id);
+      },
+      error: (error) => {
+        console.error('Erro ao deletar notificação:', error);
+      }
+    });
+  }
+
+  clearAllNotifications(): void {
+    const userId = this.authService.getUserId();
+    if (!userId) return;
+
+    this.notificationService.deleteAllNotifications(userId).subscribe({
+      next: () => {
+        this.notificationService.clearAllNotificationsLocally();
+      },
+      error: (error) => {
+        console.error('Erro ao limpar todas as notificações:', error);
+      }
+    });
+  }
+
+  onNotificationClick(notification: NotificationDTO): void {
+    // Marca como lida se não estiver
+    this.markNotificationAsRead(notification);
+
+    // Navega baseado no tipo de notificação
+    this.navigateBasedOnNotificationType(notification);
+    
+    // Fecha o painel
+    this.closeNotificationPanel();
+  }
+
+  private navigateBasedOnNotificationType(notification: NotificationDTO): void {
+    switch (notification.type) {
+      case NotificationType.FRIENDSHIP_REQUEST:
+        this.router.navigate(['/user/profile', notification.senderId]);
+        break;
+      case NotificationType.FRIENDSHIP_ACCEPTED:
+        this.router.navigate(['/user/profile', notification.senderId]);
+        break;
+      case NotificationType.NEW_COMMENT:
+      case NotificationType.NEW_LIKE:
+        if (notification.referenceId) {
+          this.router.navigate(['/user/post', notification.referenceId]);
+        }
+        break;
+      case NotificationType.NEW_POST:
+        this.router.navigate(['/user/profile', notification.senderId]);
+        break;
+      default:
+        // Navegação padrão para o perfil do remetente
+        this.router.navigate(['/user/profile', notification.senderId]);
+    }
+  }
+
+  getNotificationIcon(type: NotificationType): string {
+    return this.notificationService.getNotificationIcon(type);
+  }
+
+  getNotificationIconColor(type: NotificationType): string {
+    return this.notificationService.getNotificationIconColor(type);
+  }
+
+  getRelativeTime(dateStr: string): string {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return 'Agora';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}min`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
+    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d`;
+    if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)}m`;
+    return `${Math.floor(diffInSeconds / 31536000)}a`;
+  }
+
+  // Métodos do usuário (mantidos do código original)
   getUserProfilePicture(): string {
     return this.currentUser?.profilePicture || 'img/calangos/default.png';
   }
@@ -171,6 +333,10 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
     target.src = 'img/calangos/default.png';
+  }
+
+  trackByNotificationId(index: number, notification: NotificationDTO): string {
+    return notification.id;
   }
 
   logout(): void {

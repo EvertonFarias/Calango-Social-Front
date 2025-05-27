@@ -1,57 +1,61 @@
-<div class="sidebar-container" [class.expanded-search]="isSearchActive">
-  <div class="logo-container" [class.minimized]="isSearchActive">
+<div class="sidebar-container" [class.expanded-search]="isSearchActive" [class.expanded-notifications]="showNotificationPanel">
+  <div class="logo-container" [class.minimized]="isSearchActive || showNotificationPanel">
     <a routerLink="/user/home" class="logo">
-      <h1 *ngIf="!isSearchActive">CalangoSocial</h1>
-      <span *ngIf="isSearchActive" class="material-symbols-outlined">diversity_3</span>
+      <h1 *ngIf="!isSearchActive && !showNotificationPanel">CalangoSocial</h1>
+      <span *ngIf="isSearchActive || showNotificationPanel" class="material-symbols-outlined">diversity_3</span>
     </a>
   </div>
 
   <nav class="navigation">
     <ul class="menu-list">
       <li>
-        <a routerLink="/user/home" [class.icon-only]="isSearchActive">
+        <a routerLink="/user/home" [class.icon-only]="isSearchActive || showNotificationPanel">
           <span class="material-symbols-outlined">home</span> 
-          <span class="menu-text" *ngIf="!isSearchActive">Página Inicial</span>
+          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Página Inicial</span>
         </a>
       </li>
       
       <li>
-        <a (click)="toggleSearch($event)" [class.active]="isSearchActive" [class.icon-only]="isSearchActive">
+        <a (click)="toggleSearch($event)" [class.active]="isSearchActive" [class.icon-only]="isSearchActive || showNotificationPanel">
           <span class="material-symbols-outlined">search</span>
-          <span class="menu-text" *ngIf="!isSearchActive">Pesquisa</span>
+          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Pesquisa</span>
         </a>
       </li>
       
       <li>
-        <a routerLink="user/messages" [class.icon-only]="isSearchActive">
+        <a routerLink="user/messages" [class.icon-only]="isSearchActive || showNotificationPanel">
           <span class="material-symbols-outlined">chat</span>
-          <span class="menu-text" *ngIf="!isSearchActive">Mensagens</span>
+          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Mensagens</span>
         </a>
       </li>
       
       <li>
-        <a routerLink="user/notifications" [class.icon-only]="isSearchActive" (click)="hasUnreadNotifications = false">
-          <span class="material-symbols-outlined notification-icon">notifications</span>
-          <span *ngIf="hasUnreadNotifications" class="notification-badge"></span>
-          <span class="menu-text" *ngIf="!isSearchActive">Notificações</span>
+        <a (click)="toggleNotificationPanel()" [class.active]="showNotificationPanel" [class.icon-only]="isSearchActive || showNotificationPanel">
+          <div class="notification-container">
+            <span class="material-symbols-outlined notification-icon">notifications</span>
+            <span *ngIf="hasUnreadNotifications" class="notification-badge">
+              {{ unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount }}
+            </span>
+          </div>
+          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Notificações</span>
         </a>
       </li>
 
       <li>
-        <a routerLink="/user/create-post" [class.icon-only]="isSearchActive">
+        <a routerLink="/user/create-post" [class.icon-only]="isSearchActive || showNotificationPanel">
           <span class="material-symbols-outlined">add</span>
-          <span class="menu-text" *ngIf="!isSearchActive">Criar</span>
+          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Criar</span>
         </a>
       </li>
       
       <li>
-        <a routerLink="/user/profile" [class.icon-only]="isSearchActive">
+        <a routerLink="/user/profile" [class.icon-only]="isSearchActive || showNotificationPanel">
           <img 
             [src]="getUserProfilePicture()" 
             alt="Foto de perfil" 
             class="profile-picture"
             (error)="onImageError($event)">
-          <span class="menu-text" *ngIf="!isSearchActive">Perfil</span>
+          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Perfil</span>
         </a>
       </li>
     </ul>
@@ -101,7 +105,7 @@
       </div>
       <div class="recent-search-item" *ngFor="let recent of recentSearches">
         <div class="recent-user-info" (click)="selectSearchResult(recent)">
-          <img [src]="recent.profilePicture || 'img/calangos/default.png.png'" alt="Profile picture" class="result-avatar">
+          <img [src]="recent.profilePicture || 'img/calangos/default.png'" alt="Profile picture" class="result-avatar">
           <div class="result-details">
             <span class="result-username">{{recent.username}}</span>
           </div>
@@ -113,8 +117,78 @@
     </div>
   </div>
 
-  <button class="btn-basic logout-button" (click)="logout()" [class.icon-only]="isSearchActive">
+  <!-- Painel de notificações -->  
+  <div class="notification-panel" *ngIf="showNotificationPanel">
+    <div class="notification-header">
+      <h3>Notificações</h3>
+      <div class="notification-header-actions">
+        <button *ngIf="hasUnreadNotifications" class="mark-all-read" (click)="markAllNotificationsAsRead()">
+          <span class="material-symbols-outlined">done_all</span>
+        </button>
+        <button class="close-notifications" (click)="closeNotificationPanel()">
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="notifications-content">
+      <div *ngIf="notifications.length === 0" class="no-notifications">
+        <span class="material-symbols-outlined">notifications_none</span>
+        <p>Nenhuma notificação</p>
+      </div>
+
+      <div *ngIf="notifications.length > 0" class="notifications-actions">
+        <button class="clear-all-notifications" (click)="clearAllNotifications()">
+          Limpar todas
+        </button>
+      </div>
+
+      <div class="notifications-list">
+        <div 
+          *ngFor="let notification of notifications; trackBy: trackByNotificationId" 
+          class="notification-item"
+          [class.unread]="!notification.isRead"
+          (click)="onNotificationClick(notification)">
+          
+          <div class="notification-icon">
+            <span 
+              class="material-symbols-outlined"
+              [style.color]="getNotificationIconColor(notification.type)">
+              {{ getNotificationIcon(notification.type) }}
+            </span>
+          </div>
+
+          <div class="notification-content">
+            <div class="notification-header-info">
+              <img 
+                [src]="notification.senderProfilePicture || 'img/calangos/default.png'" 
+                alt="Profile picture" 
+                class="notification-avatar"
+                (error)="onImageError($event)">
+              <div class="notification-user-info">
+                <span class="notification-username">{{ notification.senderName }}</span>
+                <span class="notification-time">{{ getRelativeTime(notification.createdAt)  }}</span>
+              </div>
+            </div>
+            
+            <div class="notification-message">
+              <p>{{ notification.message }}</p>
+            </div>
+          </div>
+
+          <div class="notification-actions">
+            <button class="delete-notification" (click)="deleteNotification(notification, $event)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+            <div *ngIf="!notification.isRead" class="unread-indicator"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-basic logout-button" (click)="logout()" [class.icon-only]="isSearchActive || showNotificationPanel">
     <span class="material-symbols-outlined">logout</span>
-    <span class="menu-text" *ngIf="!isSearchActive">Sair</span>
+    <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Sair</span>
   </button>
 </div>
