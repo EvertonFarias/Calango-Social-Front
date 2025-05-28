@@ -1,4 +1,4 @@
-<!-- feed.component.html -->
+
 <div class="feed-container" *ngIf="!isLoading; else loading">   
   <div *ngFor="let post of posts" class="post-card">     
     <div class="post-header">       
@@ -46,9 +46,18 @@
         <button 
           mat-button 
           class="action-btn like-btn"
-          (click)="likePost(post.id)">
-          <mat-icon color="warn">thumb_up</mat-icon> 
-          <span>{{ post.likesCount }}</span>
+          [ngClass]="{
+            'liked': isPostLiked(post),
+            'liking': likingPosts.has(post.id)
+          }"
+          (click)="likePost(post.id)"
+          [disabled]="likingPosts.has(post.id)">
+          <mat-icon>
+            {{ getLikeIcon(post) }}
+          </mat-icon> 
+          <span class="like-count" [ngClass]="{'liked-count': isPostLiked(post)}">
+            {{ post.likesCount }}
+          </span>
         </button>
         
         <!-- Botão de comentar -->
@@ -70,8 +79,30 @@
         Ver mais
       </button>     
     </div>    
-  </div> 
-</div>  
+  </div>
+
+  <div *ngIf="isLoadingMore" class="loading-more-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Carregando mais posts...</p>
+  </div>
+
+  <div *ngIf="hasMorePosts && !isLoadingMore && posts.length > 0" class="manual-load-container">
+    <button mat-raised-button color="primary" (click)="loadMorePosts()">
+      Carregar Mais Posts (Debug)
+    </button>
+    <p>Posts atuais: {{ posts.length }} | Página: {{ currentPage }}</p>
+  </div>
+
+  <!-- Mensagem quando não há mais posts -->
+  <div *ngIf="!hasMorePosts && posts.length > 0" class="no-more-posts">
+    <p>Você chegou ao fim! 🎉</p>
+  </div>
+
+  <!-- Mensagem quando não há posts -->
+  <div *ngIf="posts.length === 0" class="no-posts">
+    <p>Nenhum post encontrado. Siga algumas pessoas para ver posts no seu feed!</p>
+  </div>
+</div>
 
 <ng-template #loading>   
   <div class="loading">

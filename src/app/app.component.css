@@ -3,21 +3,50 @@ app-auth-header {
   position: fixed;
   top: 0;
   left: 0;
-  width: 260px;
   height: 100vh;
+  width: 260px; /* Explicit width for sidebar */
   background-color: #fff;
   border-right: 1px solid #ddd;
-  z-index: 1000;
+  z-index: 1000; /* Ensure sidebar is above other content */
 }
 
+/* Ensure main content respects sidebar */
 .main-content {
   margin-left: 0;
   transition: margin-left 0.3s ease;
-} 
-.main-wrapper.shifted {
-  margin-left: 0;
-  transition: margin-left 0.3s ease;
-    margin-left: 260px; 
 }
 
+/* Shift main content when sidebar is present */
+.main-wrapper.shifted {
+  margin-left: 260px; /* Push content to the right of the sidebar */
+  transition: margin-left 0.3s ease;
+  box-sizing: border-box; /* Prevent overflow from margins */
+}
 
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  app-auth-header {
+    width: 0; /* Collapse sidebar on mobile */
+    overflow: hidden; /* Hide sidebar content when collapsed */
+    transition: width 0.3s ease;
+  }
+
+  .main-wrapper.shifted {
+    margin-left: 0; /* Remove margin to center content on mobile */
+  }
+
+  /* Optional: Toggle sidebar on mobile */
+  .main-wrapper.sidebar-open app-auth-header {
+    width: 260px; /* Show sidebar when toggled */
+  }
+
+  .main-wrapper.sidebar-open {
+    margin-left: 260px; /* Shift content when sidebar is toggled open */
+  }
+}
+
+@media (max-width: 480px) {
+  .main-wrapper.shifted {
+    margin-left: 0; /* Ensure no margin on very small screens */
+  }
+}

@@ -1,0 +1,121 @@
+/* Styles for the post card within the modal */
+.post-modal .modal-content .post-card-modal {
+  padding: 20px;
+}
+
+.post-modal .modal-content .post-card-modal .post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.post-modal .modal-content .post-card-modal .post-header .avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.post-modal .modal-content .post-card-modal .post-header .avatar:hover {
+  opacity: 0.8;
+}
+
+.post-modal .modal-content .post-card-modal .post-header .user-info {
+  flex: 1;
+}
+
+.post-modal .modal-content .post-card-modal .post-header .user-info .username {
+  display: block;
+  cursor: pointer;
+  color: #1976d2;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.post-modal .modal-content .post-card-modal .post-header .user-info .username:hover {
+  text-decoration: underline;
+}
+
+.post-modal .modal-content .post-card-modal .post-header .user-info .timestamp {
+  color: #666;
+  font-size: 0.875rem;
+  margin-top: 2px;
+}
+
+.post-modal .modal-content .post-card-modal .post-content {
+  margin-bottom: 20px;
+}
+
+.post-modal .modal-content .post-card-modal .post-content .post-text {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  white-space: pre-wrap;
+}
+
+.post-modal .modal-content .post-card-modal .post-content .post-media {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.post-modal .modal-content .post-card-modal .post-content .video-container {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.post-modal .modal-content .post-card-modal .post-content .video-container video {
+  border-radius: 8px;
+  max-height: 400px;
+  width: 100%;
+  object-fit: contain;
+}
+
+.post-modal .modal-content .post-card-modal .post-actions {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 16px;
+  margin-bottom: 20px;
+}
+
+.post-modal .modal-content .post-card-modal .post-actions .action-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.post-modal .modal-content .post-card-modal .post-actions .action-buttons .action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: background-color 0.2s;
+}
+
+.post-modal .modal-content .post-card-modal .post-actions .action-buttons .action-btn:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.post-modal .modal-content .post-card-modal .post-actions .action-buttons .action-btn mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.post-modal .modal-content .post-card-modal .post-actions .action-buttons .action-btn span {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.post-modal .modal-content .post-card-modal .post-actions .action-buttons .like-btn.liked {
+  color: #1976d2;
+}
+
+.post-modal .modal-content .post-card-modal .post-actions .action-buttons .like-btn.liking {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

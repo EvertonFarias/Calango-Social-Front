@@ -1,0 +1,43 @@
+.logo-container {
+  text-align: center;
+  margin-bottom: 2rem;
+  transition: opacity 0.3s ease;
+  grid-column: 1 / span 2;
+}
+
+.logo-container.minimized {
+  opacity: 0.6;
+  transform: scale(0.8);
+  grid-column: 1;
+}
+
+h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #2F80ED, #1d5bb0);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .logo-container {
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    display: none; /* Esconde o texto do logo em mobile */
+  }
+
+  .logo-container .material-symbols-outlined {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-container .material-symbols-outlined {
+    font-size: 20px;
+  }
+}

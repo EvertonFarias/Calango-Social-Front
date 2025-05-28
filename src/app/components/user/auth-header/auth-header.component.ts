@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,7 +23,16 @@ import { NotificationDTO, NotificationService, NotificationType } from '../../..
     FormsModule
   ],
   templateUrl: './auth-header.component.html',
-  styleUrls: ['./auth-header.component.css', './notification.css', './search.css', './profile-picture.css'],
+  styleUrls: [
+    './css/sidebar-base.css',
+    './css/sidebar-logo.css',
+    './css/sidebar-navigation.css',
+    './css/sidebar-notifications.css',
+    './css/sidebar-search.css',
+    './css/sidebar-profile.css',
+    './css/sidebar-logout.css',
+    './css/sidebar-animations.css'
+  ],
 })
 export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   isSearchActive = false;
@@ -38,8 +47,11 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   showNotificationPanel = false;
   
   currentUser: UserDTO | null = null;
+  isMobile = false;
 
   @ViewChild('searchInput') searchInput!: ElementRef;
+  @ViewChild('searchContainer') searchContainer!: ElementRef;
+  @ViewChild('notificationContainer') notificationContainer!: ElementRef;
   
   private searchSubject = new Subject<string>();
   private subscriptions: Subscription[] = [];
@@ -59,7 +71,41 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  // Listener para mudanças no tamanho da tela
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event): void {
+    this.checkScreenSize();
+  }
+
+  // Listener para cliques globais no documento
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    
+    // Verifica se o clique foi fora do container de busca
+    if (this.isSearchActive && this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
+      this.closeSearch();
+    }
+    
+    // Verifica se o clique foi fora do container de notificações
+    if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
+      this.closeNotificationPanel();
+    }
+  }
+
+  // Listener para a tecla ESC
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapeKey(event: KeyboardEvent): void {
+    if (this.isSearchActive) {
+      this.closeSearch();
+    }
+    if (this.showNotificationPanel) {
+      this.closeNotificationPanel();
+    }
+  }
+
   ngOnInit(): void {
+    this.checkScreenSize();
     this.loadRecentSearches();
     this.initializeUser();
     this.initializeNotifications();
@@ -110,20 +156,38 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.push(notificationsSub, unreadCountSub, newNotificationSub);
   }
 
-  // Métodos de Search (mantidos do código original)
+  // Método para verificar o tamanho da tela
+  private checkScreenSize(): void {
+    this.isMobile = window.innerWidth <= 768;
+    // Fecha painéis quando muda para mobile para evitar problemas de layout
+    if (this.isMobile) {
+      this.closeAllPanels();
+    }
+  }
+
+  // Método para fechar todos os painéis (útil quando clicar em outros ícones)
+  private closeAllPanels(): void {
+    this.closeSearch();
+    this.closeNotificationPanel();
+  }
+
+  // Métodos de Search (atualizados)
   toggleSearch(event: Event): void {
     event.preventDefault();
-    this.isSearchActive = !this.isSearchActive;
-    this.showNotificationPanel = false; // Fecha painel de notificações
+    event.stopPropagation(); // Impede a propagação do evento
     
+    // Se já está ativo, fecha; senão abre e fecha outros painéis
     if (this.isSearchActive) {
+      this.closeSearch();
+    } else {
+      this.closeNotificationPanel(); // Fecha painel de notificações
+      this.isSearchActive = true;
+      
       setTimeout(() => {
         if (this.searchInput) {
           this.searchInput.nativeElement.focus();
         }
       }, 100);
-    } else {
-      this.clearSearch();
     }
   }
 
@@ -193,14 +257,24 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     localStorage.removeItem('recentSearches');
   }
 
-  // Métodos de Notificação
-  toggleNotificationPanel(): void {
-    this.showNotificationPanel = !this.showNotificationPanel;
-    this.isSearchActive = false; // Fecha painel de busca
+  // Métodos de Notificação (atualizados)
+  toggleNotificationPanel(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation(); // Impede a propagação do evento
+    }
     
-    if (this.showNotificationPanel && this.hasUnreadNotifications) {
-      // Marca todas como lidas quando abre o painel
-      this.markAllNotificationsAsRead();
+    // Se já está ativo, fecha; senão abre e fecha outros painéis
+    if (this.showNotificationPanel) {
+      this.closeNotificationPanel();
+    } else {
+      this.closeSearch(); // Fecha painel de busca
+      this.showNotificationPanel = true;
+      
+      if (this.hasUnreadNotifications) {
+        // Marca todas como lidas quando abre o painel
+        this.markAllNotificationsAsRead();
+      }
     }
   }
 
@@ -339,7 +413,13 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     return notification.id;
   }
 
+  // Método para ser chamado quando clicar em outros ícones da sidebar
+  onSidebarItemClick(): void {
+    this.closeAllPanels();
+  }
+
   logout(): void {
+    this.closeAllPanels();
     this.notificationService.disconnect();
     this.authService.logout();
     this.router.navigate(['auth/login']);

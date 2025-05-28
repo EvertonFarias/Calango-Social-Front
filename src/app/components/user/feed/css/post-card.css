@@ -1,0 +1,86 @@
+/* Post Card - Estrutura do card */
+.post-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.post-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Header do post */
+.post-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  gap: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.avatar:hover {
+  transform: scale(1.05);
+}
+
+.username-link {
+  cursor: pointer;
+  color: #1976d2;
+  transition: color 0.2s ease;
+}
+
+.username-link:hover {
+  color: #0d47a1;
+  text-decoration: underline;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Conteúdo do post */
+.post-content {
+  padding: 0 16px;
+}
+
+.post-content p {
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+/* Responsividade do post card */
+@media (max-width: 768px) {
+  .post-card {
+    margin-bottom: 16px;
+  }
+  
+  .post-header {
+    padding: 12px;
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .post-content {
+    padding: 0 12px;
+  }
+}

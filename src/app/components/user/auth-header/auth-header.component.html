@@ -1,72 +1,94 @@
-<div class="sidebar-container" [class.expanded-search]="isSearchActive" [class.expanded-notifications]="showNotificationPanel">
-  <div class="logo-container" [class.minimized]="isSearchActive || showNotificationPanel">
-    <a routerLink="/user/home" class="logo">
-      <h1 *ngIf="!isSearchActive && !showNotificationPanel">CalangoSocial</h1>
-      <span *ngIf="isSearchActive || showNotificationPanel" class="material-symbols-outlined">diversity_3</span>
+<div class="sidebar-container" 
+     [class.expanded-search]="isSearchActive" 
+     [class.expanded-notifications]="showNotificationPanel"
+     [class.mobile]="isMobile">
+  
+  <!-- Logo container - oculto no mobile quando painéis estão abertos -->
+  <div class="logo-container" 
+       [class.minimized]="isSearchActive || showNotificationPanel"
+       [class.mobile-hidden]="isMobile && (isSearchActive || showNotificationPanel)">
+    <a routerLink="/user/home" class="logo" (click)="onSidebarItemClick()">
+      <h1 *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">CalangoSocial</h1>
+      <span *ngIf="isMobile || isSearchActive || showNotificationPanel" class="material-symbols-outlined">diversity_3</span>
     </a>
   </div>
 
-  <nav class="navigation">
+  <nav class="navigation" [class.mobile-hidden]="isMobile && (isSearchActive || showNotificationPanel)">
     <ul class="menu-list">
       <li>
-        <a routerLink="/user/home" [class.icon-only]="isSearchActive || showNotificationPanel">
+        <a routerLink="/user/home" 
+           [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile" 
+           (click)="onSidebarItemClick()">
           <span class="material-symbols-outlined">home</span> 
-          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Página Inicial</span>
+          <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Página Inicial</span>
         </a>
       </li>
       
       <li>
-        <a (click)="toggleSearch($event)" [class.active]="isSearchActive" [class.icon-only]="isSearchActive || showNotificationPanel">
+        <a (click)="toggleSearch($event)" 
+           [class.active]="isSearchActive" 
+           [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile">
           <span class="material-symbols-outlined">search</span>
-          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Pesquisa</span>
+          <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Pesquisa</span>
         </a>
       </li>
       
       <li>
-        <a routerLink="user/messages" [class.icon-only]="isSearchActive || showNotificationPanel">
+        <a routerLink="user/messages" 
+           [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile" 
+           (click)="onSidebarItemClick()">
           <span class="material-symbols-outlined">chat</span>
-          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Mensagens</span>
+          <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Mensagens</span>
         </a>
       </li>
       
       <li>
-        <a (click)="toggleNotificationPanel()" [class.active]="showNotificationPanel" [class.icon-only]="isSearchActive || showNotificationPanel">
+        <a (click)="toggleNotificationPanel($event)" 
+           [class.active]="showNotificationPanel" 
+           [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile">
           <div class="notification-container">
-            <span class="material-symbols-outlined notification-icon">notifications</span>
+            <span class="material-symbols-outlined">notifications</span>
             <span *ngIf="hasUnreadNotifications" class="notification-badge">
               {{ unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount }}
             </span>
           </div>
-          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Notificações</span>
+          <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Notificações</span>
         </a>
       </li>
 
       <li>
-        <a routerLink="/user/create-post" [class.icon-only]="isSearchActive || showNotificationPanel">
+        <a routerLink="/user/create-post" 
+           [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile" 
+           (click)="onSidebarItemClick()">
           <span class="material-symbols-outlined">add</span>
-          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Criar</span>
+          <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Criar</span>
         </a>
       </li>
       
       <li>
-        <a routerLink="/user/profile" [class.icon-only]="isSearchActive || showNotificationPanel">
+        <a routerLink="/user/profile" 
+           [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile" 
+           (click)="onSidebarItemClick()">
           <img 
             [src]="getUserProfilePicture()" 
             alt="Foto de perfil" 
             class="profile-picture"
             (error)="onImageError($event)">
-          <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Perfil</span>
+          <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Perfil</span>
         </a>
       </li>
     </ul>
   </nav>
 
-  <!-- Painel de pesquisa dentro da sidebar -->
-  <div class="search-panel" *ngIf="isSearchActive">
+  <!-- Painel de pesquisa -->
+  <div class="search-panel" 
+       *ngIf="isSearchActive" 
+       #searchContainer
+       [class.mobile-fullscreen]="isMobile">
     <div class="search-header">
       <h3>Pesquisar</h3>
       <button class="close-search" (click)="closeSearch()">
-        <span class="material-symbols-outlined">arrow_back</span>
+        <span class="material-symbols-outlined">{{ isMobile ? 'close' : 'arrow_back' }}</span>
       </button>
     </div>
     
@@ -118,7 +140,10 @@
   </div>
 
   <!-- Painel de notificações -->  
-  <div class="notification-panel" *ngIf="showNotificationPanel">
+  <div class="notification-panel" 
+       *ngIf="showNotificationPanel" 
+       #notificationContainer
+       [class.mobile-fullscreen]="isMobile">
     <div class="notification-header">
       <h3>Notificações</h3>
       <div class="notification-header-actions">
@@ -126,7 +151,7 @@
           <span class="material-symbols-outlined">done_all</span>
         </button>
         <button class="close-notifications" (click)="closeNotificationPanel()">
-          <span class="material-symbols-outlined">arrow_back</span>
+          <span class="material-symbols-outlined">{{ isMobile ? 'close' : 'arrow_back' }}</span>
         </button>
       </div>
     </div>
@@ -187,8 +212,11 @@
     </div>
   </div>
 
-  <button class="btn-basic logout-button" (click)="logout()" [class.icon-only]="isSearchActive || showNotificationPanel">
+  <button class="btn-basic logout-button" 
+          [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile"
+          [class.mobile-hidden]="isMobile && (isSearchActive || showNotificationPanel)"
+          (click)="logout()">
     <span class="material-symbols-outlined">logout</span>
-    <span class="menu-text" *ngIf="!isSearchActive && !showNotificationPanel">Sair</span>
+    <span class="logout-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Sair</span>
   </button>
 </div>

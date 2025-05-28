@@ -5,6 +5,7 @@ import { Subject, takeUntil, finalize } from 'rxjs';
 import { CommentsService, Comment, CommentRequest } from '../../../services/Comment.service';
 import { AuthService } from '../../../services/auth.service';
 import { UserDTO, UserService } from '../../../services/UserService';
+import { PostService, PostResponseDto } from '../../../services/PostService';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
@@ -39,7 +40,14 @@ export interface CurrentUser {
 @Component({
   selector: 'app-post-modal',
   templateUrl: './post-modal.component.html',
-  styleUrls: ['./post-modal.component.css'],
+  styleUrls: [
+    './post-modal.component.css',
+    './css/modal-header.css',
+    './css/modal-post.css',
+    './css/modal-comments.css',
+    './css/modal-media-queries.css'
+  ],
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -47,30 +55,19 @@ export interface CurrentUser {
     MatMenuModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule, 
+    MatInputModule,
     MatProgressSpinnerModule
   ]
 })
 export class PostModalComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  
   comments: Comment[] = [];
   newCommentText = '';
   isLoadingComments = false;
   isSubmittingComment = false;
   commentsError = false;
   currentUser: CurrentUser | null = null;
-    private showToast(icon: 'success' | 'error' | 'info', title: string) {
-      Swal.fire({
-        toast: true,
-        position: 'bottom-end',
-        icon,
-        title,
-        showConfirmButton: false,
-        timer: 1500,
-        timerProgressBar: true
-      });
-    }
+  isLikingPost = false;
 
   constructor(
     public dialogRef: MatDialogRef<PostModalComponent>,
@@ -78,7 +75,8 @@ export class PostModalComponent implements OnInit, OnDestroy {
     private router: Router,
     private commentsService: CommentsService,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private postService: PostService
   ) {}
 
   ngOnInit(): void {
@@ -93,17 +91,11 @@ export class PostModalComponent implements OnInit, OnDestroy {
     this.commentsService.clearComments();
   }
 
-  /**
-   * Carrega informações do usuário atual
-   */
   private loadCurrentUser(): void {
-    // Primeiro tenta obter do cache do UserService
     const cachedUser = this.userService.getCurrentUser();
-    
     if (cachedUser) {
       this.setCurrentUser(cachedUser);
     } else {
-      // Se não tem no cache, carrega do servidor
       this.userService.loadUser()
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -118,7 +110,6 @@ export class PostModalComponent implements OnInit, OnDestroy {
         });
     }
 
-    // Também se inscreve nas mudanças futuras do usuário
     this.userService.user$
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
@@ -131,14 +122,11 @@ export class PostModalComponent implements OnInit, OnDestroy {
   private setCurrentUser(userDto: UserDTO): void {
     this.currentUser = {
       id: userDto.id,
-      username: userDto.login, // Usando 'login' como username
+      username: userDto.login,
       profilePicture: userDto.profilePicture || undefined
     };
   }
 
-  /**
-   * Se inscreve nas mudanças dos comentários
-   */
   private subscribeToComments(): void {
     this.commentsService.comments$
       .pipe(takeUntil(this.destroy$))
@@ -147,9 +135,6 @@ export class PostModalComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Carrega os comentários do post
-   */
   loadComments(): void {
     this.isLoadingComments = true;
     this.commentsError = false;
@@ -161,12 +146,10 @@ export class PostModalComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (comments) => {
-          // Adicionar postId aos comentários e ordenar por data (mais recentes primeiro)
           const commentsWithPostId = comments.map(comment => ({
             ...comment,
             postId: this.data.id
           })).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-          
           this.commentsService.updateCommentsSubject(commentsWithPostId);
           this.commentsError = false;
         },
@@ -177,9 +160,6 @@ export class PostModalComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Submete um novo comentário
-   */
   submitComment(): void {
     if (!this.newCommentText?.trim() || !this.currentUser) {
       return;
@@ -211,21 +191,15 @@ export class PostModalComponent implements OnInit, OnDestroy {
 
           this.commentsService.addCommentToSubject(newComment);
           this.newCommentText = '';
-          
-          // Atualizar contador de comentários
           this.data.commentsCount = this.comments.length;
         },
         error: (error) => {
           console.error('Erro ao criar comentário:', error);
-          // Implementar notificação de erro para o usuário
-          alert('Erro ao enviar comentário. Tente novamente.');
+          this.showToast('error', 'Erro ao enviar comentário. Tente novamente.');
         }
       });
   }
 
-  /**
-   * Lida com o evento de tecla no textarea do comentário
-   */
   onCommentKeydown(event: Event): void {
     const keyboardEvent = event as KeyboardEvent;
     if (keyboardEvent.key === 'Enter' && !keyboardEvent.shiftKey) {
@@ -234,48 +208,17 @@ export class PostModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Curte ou descurte um comentário
-   * Nota: Implementação local até que a API tenha endpoint para curtir comentários
-   */
   toggleCommentLike(comment: Comment): void {
-    // Implementação local para desenvolvimento
     const updatedComment = {
       ...comment,
       isLiked: !comment.isLiked,
-      likesCount: comment.isLiked ? 
-        (comment.likesCount || 0) - 1 : 
-        (comment.likesCount || 0) + 1
+      likesCount: comment.isLiked ? (comment.likesCount || 0) - 1 : (comment.likesCount || 0) + 1
     };
-
     this.commentsService.updateCommentInSubject(updatedComment);
-
-    // TODO: Implementar quando a API tiver endpoint para curtir comentários
-    /* 
-    this.commentsService.toggleCommentLike(this.data.id, comment.id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          const updatedComment = {
-            ...comment,
-            isLiked: response.isLiked,
-            likesCount: response.likesCount
-          };
-          this.commentsService.updateCommentInSubject(updatedComment);
-        },
-        error: (error) => {
-          console.error('Erro ao curtir comentário:', error);
-        }
-      });
-    */
   }
 
-  /**
-   * Responder a um comentário
-   */
   replyToComment(comment: Comment): void {
     this.newCommentText = `@${comment.username} `;
-    // Focar no input de comentário
     setTimeout(() => {
       const textarea = document.querySelector('.comment-input textarea') as HTMLTextAreaElement;
       if (textarea) {
@@ -285,90 +228,143 @@ export class PostModalComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  /**
-   * Excluir um comentário
-   * Nota: Implementação local até que a API tenha endpoint para deletar comentários
-   */
-deleteComment(comment: Comment): void {
-  Swal.fire({
-    title: 'Tem certeza que deseja excluir este comentário?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Sim, excluir',
-    cancelButtonText: 'Cancelar',
-    reverseButtons: true
-  }).then((result) => {
-    if (result.isConfirmed) {
-      this.commentsService.removeCommentFromSubject(comment.id);
-      this.data.commentsCount = Math.max(0, this.data.commentsCount - 1);
-      this.showToast("success", "Comentário deletado")
-      this.commentsService.deleteComment(this.data.id, comment.id)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            // Nenhuma notificação aqui
-          },
-          error: (error) => {
-            console.error('Erro ao excluir comentário:', error);
-            this.showToast("error", "Erro ao excluir comentário. Tente novamente.");
-          }
-        });
-    }
-  });
-}
+  deleteComment(comment: Comment): void {
+    Swal.fire({
+      title: 'Tem certeza que deseja excluir este comentário?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.commentsService.removeCommentFromSubject(comment.id);
+        this.data.commentsCount = Math.max(0, this.data.commentsCount - 1);
+        this.showToast('success', 'Comentário deletado');
+        this.commentsService.deleteComment(this.data.id, comment.id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {},
+            error: (error) => {
+              console.error('Erro ao excluir comentário:', error);
+              this.showToast('error', 'Erro ao excluir comentário. Tente novamente.');
+            }
+          });
+      }
+    });
+  }
 
-
-  /**
-   * TrackBy function para otimizar a renderização da lista
-   */
   trackByCommentId(index: number, comment: Comment): string {
     return comment.id;
   }
 
-  /**
-   * Navega para o perfil do usuário
-   */
   navigateToProfile(userId: string): void {
     this.dialogRef.close();
     this.router.navigate(['user/profile', userId]);
   }
 
-  /**
-   * Curte o post
-   * Nota: Implementar com a API de posts quando disponível
-   */
   likePost(): void {
-    // Implementação local para desenvolvimento
-    this.data.isLiked = !this.data.isLiked;
-    this.data.likesCount += this.data.isLiked ? 1 : -1;
+    if (this.isLikingPost) {
+      console.log('Like action blocked: already processing', this.data.id);
+      return;
+    }
 
-    // TODO: Implementar com a API de posts
-    /*
-    this.postsService.togglePostLike(this.data.id)
+    this.isLikingPost = true;
+
+    const originalLikedState = this.data.isLiked;
+    const originalLikesCount = this.data.likesCount;
+
+    console.log('Like action started:', {
+      postId: this.data.id,
+      originalLikedState,
+      originalLikesCount,
+      action: originalLikedState ? 'unlike' : 'like'
+    });
+
+    this.data.isLiked = !originalLikedState;
+    this.data.likesCount = originalLikedState ? originalLikesCount - 1 : originalLikesCount + 1;
+
+    this.postService.toggleLike(this.data.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
-          this.data.isLiked = response.isLiked;
-          this.data.likesCount = response.likesCount;
+        next: (updatedPost: PostResponseDto) => {
+          console.log('Like response received:', {
+            postId: this.data.id,
+            updatedPost: {
+              isLiked: updatedPost.isLiked,
+              likesCount: updatedPost.likesCount
+            }
+          });
+
+          this.data.isLiked = updatedPost.isLiked;
+          this.data.likesCount = updatedPost.likesCount;
+
+          console.log('Post updated with server response:', {
+            postId: this.data.id,
+            finalState: {
+              isLiked: this.data.isLiked,
+              likesCount: this.data.likesCount
+            }
+          });
+
+          this.isLikingPost = false;
+          
         },
         error: (error) => {
-          console.error('Erro ao curtir post:', error);
-          // Reverter mudança local em caso de erro
-          this.data.isLiked = !this.data.isLiked;
-          this.data.likesCount += this.data.isLiked ? 1 : -1;
+          console.error('Error liking/unliking post:', error);
+
+          this.data.isLiked = originalLikedState;
+          this.data.likesCount = originalLikesCount;
+
+          console.log('Reverted post state after error:', {
+            postId: this.data.id,
+            revertedState: {
+              isLiked: originalLikedState,
+              likesCount: originalLikesCount
+            }
+          });
+
+          this.isLikingPost = false;
+          this.showToast('error', 'Erro ao curtir post. Tente novamente.');
         }
       });
-    */
   }
 
-  /**
-   * Toggle dos comentários (se necessário)
-   */
+  getLikeButtonClass(): string {
+    let classes = 'action-btn like-btn';
+    if (this.data.isLiked) {
+      classes += ' liked';
+    }
+    if (this.isLikingPost) {
+      classes += ' liking';
+    }
+    console.log(`Post ${this.data.id} button classes:`, classes);
+    return classes;
+  }
+
+  getLikeIcon(): string {
+    const icon = this.data.isLiked ? 'thumb_up' : 'thumb_up_off_alt';
+    console.log(`Post ${this.data.id} icon:`, icon);
+    return icon;
+  }
+
   toggleComments(): void {
-    // Implementar se necessário - pode ser usado para mostrar/ocultar seção de comentários
+    // Implementation if needed
   }
 
   closeModal(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({ updated: this.data.isLiked !== this.data.isLiked }); // Pass updated flag only when closing
+  }
+
+  private showToast(icon: 'success' | 'error' | 'info', title: string) {
+    Swal.fire({
+      toast: true,
+      position: 'bottom-end',
+      icon,
+      title,
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true
+    });
   }
 }

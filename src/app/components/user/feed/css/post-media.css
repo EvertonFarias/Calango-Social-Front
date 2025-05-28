@@ -1,0 +1,27 @@
+/* Post Media - Imagens e vídeos */
+.post-media {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.post-media:hover {
+  opacity: 0.95;
+}
+
+.video-container {
+  width: 100%;
+  position: relative;
+}
+
+.video-container video {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  cursor: pointer;
+}

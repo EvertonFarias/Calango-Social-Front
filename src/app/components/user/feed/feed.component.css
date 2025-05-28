@@ -1,90 +1,47 @@
+/* Feed Container - Layout principal */
 .feed-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 1rem;
-  min-width: 800px;
-  max-width: 900px;
+  max-width: 700px;
+  width: 100%;
+  margin: auto;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.post-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+/* Smooth scroll para melhor experiência */
+html {
+  scroll-behavior: smooth;
 }
 
-.post-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+/* Responsividade para o container */
+@media (max-width: 768px) {
+  .feed-container {
+    padding: 10px;
+    margin-top: 100px;
+    margin-bottom: 500px;
+    max-width: 100%;
+  }
 }
 
+/* Responsividade para telas muito pequenas (ex.: celulares menores) */
+@media (max-width: 480px) {
+  .feed-container {
+    padding: 8px;
+  }
+}
+
+/* Global Styles - Estilos globais e utilitários */
+::ng-deep .error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+::ng-deep .success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.post-media,
 .avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  cursor: pointer;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
-
-.timestamp {
-  font-size: 0.8rem;
-  color: gray;
-}
-
-.post-content {
-  margin-top: 1rem;
-}
-
-.post-media {
-  width: 100%;
-  max-height: 500px;
-  object-fit: contain;
-  border-radius: 8px;
-  margin-top: 0.5rem;
-}
-
-.video-container {
-  width: 100%;
-  max-height: 400px;
-  overflow: hidden;
-  border-radius: 8px;
-  margin-top: 0.5rem;
-}
-
-.video-container video {
-  width: 100%;
-  height: auto;
-  max-height: 400px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-
-.post-actions {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #555;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.likeButton, .commentButton {
-  cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease;
-  border-radius: 50%;
-  padding: 4px;
-}
-
-.likeButton:hover {
-  background-color: rgba(22, 152, 228, 0.1); 
-  color: rgb(30, 153, 235);
-  transform: scale(1.2);
-}
-
-.commentButton:hover {
-  background-color: rgba(33, 150, 243, 0.1); /* azul claro */
-  transform: scale(1.2);
-}
-

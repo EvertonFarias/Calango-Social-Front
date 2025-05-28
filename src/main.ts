@@ -22,6 +22,7 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
 import { environment } from './environment';
 import { UserProfileComponent } from './app/components/user/user-profile/user-profile.component';
 import { VisitedProfileComponent } from './app/components/user/visited-profile/visited-profile.component';
+import { FeedComponent } from './app/components/user/feed/feed.component';
 
 (window as any).global = window;
 
@@ -65,7 +66,7 @@ const routes = [
 
   {
     path: 'user/home',
-    component: HomeComponent,
+    component: FeedComponent,
     canActivate: [AuthGuard]
   },
   {

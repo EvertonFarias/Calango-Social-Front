@@ -14,16 +14,16 @@ export interface PostRequestDto {
 export interface PostResponseDto {
   id: string;
   userId: string;
-  username: string;          // ← Adicionar
+  username: string;
   content: string;
   imageUrl: string | null;
   videoUrl: string | null;
   profilePicture: string;
   createdAt: string;
   thumbnailUrl?: string | null;
-  likesCount: number;        // ← Adicionar
-  commentsCount: number;     // ← Adicionar
-  isLiked: boolean;          // ← Adicionar
+  likesCount: number;
+  commentsCount: number;
+  isLiked: boolean;
 }
 
 @Injectable({
@@ -56,14 +56,13 @@ export class PostService {
     });
   }
 
-
   getPostById(postId: string): Observable<PostResponseDto> {
     return this.http.get<PostResponseDto>(
-      `${environment.apiUrl}/api/users/posts/${postId}`,
+      `${environment.apiUrl}/api/users/posts/${postId}/${this.authService.getUserId()}`,
       { headers: this.getAuthHeaders() }
     );
   }
-  
+
   getPostsByUser(userId: string): Observable<PostResponseDto[]> {
     return this.http.get<PostResponseDto[]>(
       `${environment.apiUrl}/api/users/${userId}/posts`,
@@ -75,5 +74,15 @@ export class PostService {
     return this.http.delete(`${this.apiUrl}/${postId}/users/${userId}`, {
       headers: this.getAuthHeaders()
     });
+  }
+
+  // Novo método para curtir/descurtir post
+  toggleLike(postId: string): Observable<PostResponseDto> {
+    const userId = this.authService.getUserId();
+    return this.http.post<PostResponseDto>(
+      `${this.apiUrl}/${postId}/${userId}/like`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
   }
 }

@@ -8,7 +8,6 @@
 
   <div mat-dialog-content class="modal-content">
     <div class="post-card-modal">
-      
       <div class="post-header">
         <img 
           [src]="data.profilePicture || 'img/calangos/default.png'" 
@@ -23,18 +22,15 @@
         </div>
       </div>
 
-      <!-- Conteúdo do Post -->
       <div class="post-content">
         <p class="post-text">{{ data.content }}</p>
         
-        <!-- Imagem do Post -->
         <img 
           *ngIf="data.imageUrl" 
           [src]="data.imageUrl" 
           class="post-media" 
           alt="Post Image">
         
-        <!-- Vídeo do Post -->
         <div *ngIf="data.videoUrl" class="video-container">
           <video width="100%" controls [poster]="data.thumbnailUrl" playsinline>
             <source [src]="data.videoUrl" type="video/mp4">
@@ -43,11 +39,10 @@
         </div>
       </div>
 
-      <!-- Ações do Post -->
       <div class="post-actions">
         <div class="action-buttons">
-          <button mat-button (click)="likePost()" class="action-btn like-btn">
-            <mat-icon color="warn">thumb_up</mat-icon>
+          <button mat-button [ngClass]="getLikeButtonClass()" (click)="likePost()" [disabled]="isLikingPost">
+            <mat-icon>{{ getLikeIcon() }}</mat-icon>
             <span>{{ data.likesCount }}</span>
           </button>
           
@@ -58,16 +53,12 @@
         </div>
       </div>
 
-      <!-- Seção de Comentários -->
       <div class="comments-section">
-        
-        <!-- Header dos Comentários -->
         <div class="comments-header">
           <h3>Comentários</h3>
           <span class="comments-count">{{ comments.length }}</span>
         </div>
         
-        <!-- Formulário para novo comentário -->
         <div class="new-comment">
           <img 
             [src]="currentUser?.profilePicture || 'img/calangos/default.png'" 
@@ -97,28 +88,22 @@
           </button>
         </div>
 
-        <!-- Lista de comentários -->
         <div class="comments-list">
-          
-          <!-- Loading -->
           <div *ngIf="isLoadingComments" class="loading-comments">
             <mat-spinner diameter="40"></mat-spinner>
           </div>
 
-          <!-- Error Message -->
           <div *ngIf="commentsError" class="error-message">
             <mat-icon>error</mat-icon>
             Erro ao carregar comentários. 
             <button mat-button (click)="loadComments()">Tentar novamente</button>
           </div>
 
-          <!-- No Comments -->
           <div *ngIf="!isLoadingComments && !commentsError && comments.length === 0" class="no-comments">
             <mat-icon>chat_bubble_outline</mat-icon>
             <p>Seja o primeiro a comentar!</p>
           </div>
 
-          <!-- Comments List -->
           <div *ngFor="let comment of comments; trackBy: trackByCommentId" class="comment-item">    
             <img 
               [src]="comment.profilePicture || 'img/calangos/default.png'" 
@@ -136,7 +121,6 @@
                 <span class="comment-timestamp">
                   {{ comment.createdAt | date: 'short' }}
                 </span>
-                
               </div>
               
               <p class="comment-text">{{ comment.content }}</p>
@@ -155,7 +139,6 @@
                   <span>Responder</span>
                 </div>
                 
-                <!-- Show delete button only for comment owner -->
                 <div 
                   *ngIf="comment.userId === currentUser?.id" 
                   class="comment-action-btn delete-btn" 

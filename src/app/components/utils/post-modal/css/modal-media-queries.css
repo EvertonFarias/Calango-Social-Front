@@ -1,0 +1,203 @@
+/* Responsive design for the post modal */
+@media (max-width: 900px) {
+  .post-modal {
+    max-width: 95vw;
+    max-height: 90vh;
+    margin: 0 auto;
+  }
+
+  .post-modal .modal-content .post-card-modal {
+    padding: 16px;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-header .avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-content .post-text {
+    font-size: 0.95rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-content .post-media,
+  .post-modal .modal-content .post-card-modal .post-content .video-container video {
+    max-height: 300px;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-actions .action-buttons .action-btn {
+    padding: 6px 12px;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-actions .action-buttons .action-btn mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-actions .action-buttons .action-btn span {
+    font-size: 0.8rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .new-comment {
+    flex-direction: column;
+    padding: 12px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .new-comment .current-user-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .new-comment .comment-submit {
+    align-self: flex-end;
+    margin-top: 8px;
+    min-width: 80px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item {
+    padding: 10px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item .comment-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item .comment-content .comment-text {
+    font-size: 0.85rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item .comment-actions .comment-action-btn {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item .comment-actions .comment-action-btn mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .post-modal {
+    max-width: 100vw;
+    max-height: 95vh;
+    border-radius: 0;
+  }
+
+  .post-modal .modal-header {
+    padding: 12px 16px;
+  }
+
+  .post-modal .modal-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .post-modal .modal-content .post-card-modal {
+    padding: 12px;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-header .avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-header .user-info .username {
+    font-size: 0.9rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-header .user-info .timestamp {
+    font-size: 0.8rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-content .post-text {
+    font-size: 0.9rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-content .post-media,
+  .post-modal .modal-content .post-card-modal .post-content .video-container video {
+    max-height: 250px;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-actions .action-buttons {
+    gap: 12px;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-actions .action-buttons .action-btn {
+    padding: 5px 10px;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-actions .action-buttons .action-btn mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .post-modal .modal-content .post-card-modal .post-actions .action-buttons .action-btn span {
+    font-size: 0.75rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-header h3 {
+    font-size: 0.9rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-header .comments-count {
+    font-size: 0.8rem;
+    padding: 3px 6px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .new-comment {
+    padding: 10px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .new-comment .current-user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .new-comment .comment-input {
+    font-size: 0.85rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .new-comment .comment-submit {
+    min-width: 70px;
+    font-size: 0.85rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list {
+    max-height: 300px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item {
+    padding: 8px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item .comment-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item .comment-content .comment-header .comment-username {
+    font-size: 0.8rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item .comment-content .comment-header .comment-timestamp {
+    font-size: 0.7rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item .comment-content .comment-text {
+    font-size: 0.8rem;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item .comment-actions .comment-action-btn {
+    font-size: 0.65rem;
+    padding: 2px 5px;
+  }
+
+  .post-modal .modal-content .post-card-modal .comments-section .comments-list .comment-item .comment-actions .comment-action-btn mat-icon {
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+  }
+}

@@ -100,7 +100,7 @@ export class NotificationService {
         iconHtml = '<span class="material-symbols-outlined" style="color: #FF9800; font-size: 24px;">chat_bubble</span>';
         break;
       case NotificationType.NEW_LIKE:
-        iconHtml = '<span class="material-symbols-outlined" style="color: #E91E63; font-size: 24px;">favorite</span>';
+        iconHtml = '<span class="material-symbols-outlined" style="color:rgb(33, 98, 239); font-size: 24px;">thumb_up</span>';
         break;
       case NotificationType.NEW_POST:
         iconHtml = '<span class="material-symbols-outlined" style="color: #9C27B0; font-size: 24px;">article</span>';
@@ -204,7 +204,7 @@ export class NotificationService {
       case NotificationType.NEW_COMMENT:
         return 'chat_bubble';
       case NotificationType.NEW_LIKE:
-        return 'favorite';
+        return 'thumb_up';
       case NotificationType.NEW_POST:
         return 'article';
       default:
@@ -221,7 +221,7 @@ export class NotificationService {
       case NotificationType.NEW_COMMENT:
         return '#FF9800';
       case NotificationType.NEW_LIKE:
-        return '#E91E63';
+        return 'rgb(33, 98, 239)';
       case NotificationType.NEW_POST:
         return '#9C27B0';
       default:

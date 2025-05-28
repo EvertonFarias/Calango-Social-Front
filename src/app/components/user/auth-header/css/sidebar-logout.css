@@ -1,0 +1,46 @@
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  transition: background-color 0.2s, color 0.2s;
+  margin: 0 1rem 50px;
+  justify-content: flex-start;
+  grid-column: 1;
+}
+
+.logout-button.icon-only {
+  justify-content: center;
+  margin: 0 auto 50px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.logout-button:hover {
+  background-color: #ffe5e5;
+  color: #b30000;
+  border-color: #ffb3b3;
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .logout-button {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+    margin: 0 0.8rem 40px;
+  }
+
+  .logout-button.icon-only {
+    width: 36px;
+    height: 36px;
+  }
+}
