@@ -44,4 +44,118 @@
     transform: translateY(-2px);
   }
 
-  
+  @media (max-width: 1024px) {
+  .hero {
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    gap: 2rem;
+    padding: 3rem 1.5rem;
+    margin-top: -100px;
+  }
+
+  .hero-img img {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+  }
+
+  .hero-text {
+    max-width: 100%;
+  }
+
+  .hero-text h1 {
+    font-size: 2rem;
+  }
+
+  .hero-text p {
+    font-size: 1rem;
+  }
+
+  .hero-text a {
+    font-size: 1rem;
+    padding: 0.7rem 1.5rem;
+  }
+  .hero-text a.btn {
+    margin-top: 10px;
+  background: linear-gradient(135deg, #2F80ED, #1C6DD0);
+  color: #fff;
+  padding: 0.85rem 2rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(47, 128, 237, 0.4);
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.hero-text a.btn:hover {
+  background: linear-gradient(135deg, #1d5bb0, #134d94);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(29, 91, 176, 0.5);
+}
+
+.hero-text a.btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 10px rgba(29, 91, 176, 0.3);
+}
+
+.hero-text a.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(47, 128, 237, 0.3);
+}
+
+}
+
+@media (max-width: 700px) {
+  .hero {
+    padding: 2rem 1rem;
+  }
+
+  .hero-img img {
+    max-width: 300px;
+  }
+
+  .hero-text h1 {
+    font-size: 1.75rem;
+  }
+
+  .hero-text p {
+    font-size: 0.95rem;
+  }
+
+  .hero-text a {
+    font-size: 0.95rem;
+    padding: 0.65rem 1.2rem;
+  }
+}
+
+@media (max-width: 400px) {
+
+  .hero-text h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero-text p {
+    font-size: 0.9rem;
+  }
+
+  .hero-text a {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .hero-img img {
+    max-width: 300px;
+    margin-top: 50px;
+  }
+}
+

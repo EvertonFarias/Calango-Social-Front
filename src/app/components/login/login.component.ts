@@ -12,7 +12,9 @@ import { environment } from '../../../environment';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  styleUrls: [
+    './login.component.css',
+  './css/banner.css'],
   standalone: true,
   imports: [ReactiveFormsModule, RouterModule],
 })

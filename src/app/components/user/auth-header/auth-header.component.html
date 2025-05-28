@@ -9,7 +9,7 @@
        [class.mobile-hidden]="isMobile && (isSearchActive || showNotificationPanel)">
     <a routerLink="/user/home" class="logo" (click)="onSidebarItemClick()">
       <h1 *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">CalangoSocial</h1>
-      <span *ngIf="isMobile || isSearchActive || showNotificationPanel" class="material-symbols-outlined">diversity_3</span>
+      <span *ngIf="isMobile || isSearchActive || showNotificationPanel" class="material-symbols-outlined logosite">diversity_3</span>
     </a>
   </div>
 
@@ -216,7 +216,7 @@
           [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile"
           [class.mobile-hidden]="isMobile && (isSearchActive || showNotificationPanel)"
           (click)="logout()">
-    <span class="material-symbols-outlined">logout</span>
+    <span class="material-symbols-outlined ">logout</span>
     <span class="logout-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Sair</span>
   </button>
 </div>

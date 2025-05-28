@@ -21,7 +21,7 @@ import { PostModalComponent } from '../../utils/post-modal/post-modal.component'
   standalone: true,
   imports: [CommonModule, RouterModule, MatIconModule, MatMenuModule, MatButtonModule],
   templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.css']
+  styleUrls: ['./css/user-profile.component.css','./css/modal.css']
 })
 export class UserProfileComponent implements OnInit {
 

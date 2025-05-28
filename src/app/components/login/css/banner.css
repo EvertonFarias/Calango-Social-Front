@@ -1,0 +1,18 @@
+.banner-mobile {
+    display: none; /* Oculta em telas grandes */
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .banner-mobile {
+        display: block;
+    }
+
+    .banner-mobile h1 {
+        color: #2F80ED; /* Azul aplicado apenas ao texto */
+        font-size: 35px;
+        margin: 0;
+        font-weight: 700;
+    }
+}

@@ -4,7 +4,6 @@ app-auth-header {
   top: 0;
   left: 0;
   height: 100vh;
-  width: 260px; /* Explicit width for sidebar */
   background-color: #fff;
   border-right: 1px solid #ddd;
   z-index: 1000; /* Ensure sidebar is above other content */

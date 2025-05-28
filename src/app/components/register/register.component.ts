@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [ReactiveFormsModule, RouterModule, CommonModule],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrls: ['./css/register.component.css', './css/media-queries.css']
 })
 export class RegisterComponent {
   registerForm: FormGroup;

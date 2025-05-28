@@ -1,0 +1,60 @@
+@media (max-width: 768px) {
+  
+  .modal-content {
+    padding: 1rem;
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .modal-header {
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .modal-header h3 {
+    font-size: 1.125rem;
+  }
+
+  .images-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.75rem;
+  }
+.selectable-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+}
+
+
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .modal-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 0.75rem;
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
+  }
+
+  .images-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+
+}

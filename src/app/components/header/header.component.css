@@ -1,4 +1,3 @@
-
 header {
     position: fixed;
     top: 0;
@@ -11,10 +10,9 @@ header {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
     max-height: 35px;
     margin: auto;
+}
 
-    
-  }
-  header h2 {
+header h2 {
     font-size: 1.8rem;
     font-weight: 800;
     letter-spacing: 1px;
@@ -22,12 +20,9 @@ header {
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-  }
-  
+}
 
-
-
-  nav a {
+nav a {
     position: relative;
     margin: 0 1rem;
     text-decoration: none;
@@ -36,9 +31,9 @@ header {
     font-size: 1rem;
     padding: 0.25rem 0;
     transition: color 0.3s ease;
-  }
-  
-  nav a::after {
+}
+
+nav a::after {
     content: '';
     position: absolute;
     width: 0%;
@@ -47,20 +42,36 @@ header {
     left: 0;
     background-color: #2F80ED;
     transition: width 0.3s ease;
-  }
-  
-  nav a:hover {
+}
+
+nav a:hover {
     color: #2F80ED;
-  }
-  
-  nav a:hover::after {
+}
+
+nav a:hover::after {
     width: 100%;
-  }
-  
-  .auth-buttons {
+}
+
+.auth-buttons {
     display: flex;
     gap: 1rem;
-  }
-  
+}
 
-  
+@media screen and (max-width: 768px) {
+    header {
+        align-items: flex-start;
+        justify-content: center;
+        padding: 1rem 1.5rem;
+        max-height: none;
+    }
+
+    header h2 {
+        display: none;
+    }
+
+    .auth-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+  }
