@@ -26,8 +26,9 @@
       
       <li>
         <a (click)="toggleSearch($event)" 
-           [class.active]="isSearchActive" 
-           [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile">
+          [class.active]="isSearchActive" 
+          [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile"
+          data-search-toggle>
           <span class="material-symbols-outlined">search</span>
           <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Pesquisa</span>
         </a>
@@ -41,11 +42,12 @@
           <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Mensagens</span>
         </a>
       </li>
-      
+
       <li>
         <a (click)="toggleNotificationPanel($event)" 
-           [class.active]="showNotificationPanel" 
-           [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile">
+          [class.active]="showNotificationPanel" 
+          [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile"
+          data-notification-toggle>
           <div class="notification-container">
             <span class="material-symbols-outlined">notifications</span>
             <span *ngIf="hasUnreadNotifications" class="notification-badge">
