@@ -80,23 +80,18 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   // Listener para cliques globais no documento
 @HostListener('document:click', ['$event'])
 onDocumentClick(event: Event): void {
+  // Ignora cliques imediatamente após toggle
+  if (this.justToggled) return;
+  
   const target = event.target as HTMLElement;
   
-  // Verifica se o clique foi no botão de toggle da pesquisa ou seus elementos filhos
-  const searchToggleButton = target.closest('[data-search-toggle]');
-  const notificationToggleButton = target.closest('[data-notification-toggle]');
-  
-  // Verifica se o clique foi fora do container de busca (e não no botão de toggle)
-  if (this.isSearchActive && this.searchContainer && 
-      !this.searchContainer.nativeElement.contains(target) && 
-      !searchToggleButton) {
+  // Verifica se o clique foi fora do container de busca
+  if (this.isSearchActive && this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
     this.closeSearch();
   }
   
-  // Verifica se o clique foi fora do container de notificações (e não no botão de toggle)
-  if (this.showNotificationPanel && this.notificationContainer && 
-      !this.notificationContainer.nativeElement.contains(target) && 
-      !notificationToggleButton) {
+  // Verifica se o clique foi fora do container de notificações
+  if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
     this.closeNotificationPanel();
   }
 }
@@ -178,25 +173,30 @@ onDocumentClick(event: Event): void {
     this.closeSearch();
     this.closeNotificationPanel();
   }
+private justToggled = false;
 
-  toggleSearch(event: Event): void {
-    event.preventDefault();
-    event.stopPropagation();
+// Modifique o método toggleSearch:
+toggleSearch(event: Event): void {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  // Define flag para ignorar próximo clique do document listener
+  this.justToggled = true;
+  setTimeout(() => this.justToggled = false, 400);
+  
+  if (this.isSearchActive) {
+    this.closeSearch();
+  } else {
+    this.closeNotificationPanel();
+    this.isSearchActive = true;
     
-    if (this.isSearchActive) {
-      this.closeSearch();
-    } else {
-      this.closeNotificationPanel();
-      this.isSearchActive = true;
-      
-      // Delay maior no mobile para garantir renderização
-      setTimeout(() => {
-        if (this.searchInput) {
-          this.searchInput.nativeElement.focus();
-        }
-      }, this.isMobile ? 250 : 100);
-    }
+    setTimeout(() => {
+      if (this.searchInput) {
+        this.searchInput.nativeElement.focus();
+      }
+    }, this.isMobile ? 300 : 100);
   }
+}
 
   closeSearch(): void {
     this.isSearchActive = false;
@@ -264,11 +264,28 @@ onDocumentClick(event: Event): void {
     localStorage.removeItem('recentSearches');
   }
 
+
 toggleNotificationPanel(event?: Event): void {
   if (event) {
     event.preventDefault();
     event.stopPropagation();
   }
+  
+  // Define flag para ignorar próximo clique do document listener
+  this.justToggled = true;
+  setTimeout(() => this.justToggled = false, 400);
+  
+  if (this.showNotificationPanel) {
+    this.closeNotificationPanel();
+  } else {
+    this.closeSearch();
+    this.showNotificationPanel = true;
+    
+    if (this.hasUnreadNotifications) {
+      this.markAllNotificationsAsRead();
+    }
+  }
+
   
   if (this.showNotificationPanel) {
     this.closeNotificationPanel();
