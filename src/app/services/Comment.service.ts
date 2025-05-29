@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { AuthService } from './auth.service';
+import { environment } from '../../environment';
 export interface Comment {
   id: string;
   postId: string;
@@ -34,7 +35,8 @@ export interface CommentResponse {
   providedIn: 'root'
 })
 export class CommentsService {
-  private baseUrl = 'http://localhost:8080/api';
+  
+  private baseUrl = `${environment.apiUrl}/api`;
   private commentsSubject = new BehaviorSubject<Comment[]>([]);
   public comments$ = this.commentsSubject.asObservable();
 

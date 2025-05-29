@@ -5,6 +5,7 @@ import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import Swal from 'sweetalert2';
 import { AuthService } from './auth.service';
+import { environment } from '../../environment';
 
 export interface NotificationDTO {
   id: string;
@@ -30,7 +31,9 @@ export enum NotificationType {
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
-  private apiUrl = 'http://localhost:8080/notifications';
+  
+
+  private apiUrl = `${environment.apiUrl}/notifications`;
 
   private newNotificationSubject = new Subject<NotificationDTO>();
   public newNotification$ = this.newNotificationSubject.asObservable();
@@ -57,7 +60,7 @@ export class NotificationService {
 
   connect(userId: string) {
     const token = this.authService.getToken();
-    const socket = new SockJS(`http://localhost:8080/ws?token=${token}`);
+    const socket = new SockJS(`${environment.apiUrl}/ws?token=${token}`);
 
     this.stompClient = new Client({
       webSocketFactory: () => socket as any,
