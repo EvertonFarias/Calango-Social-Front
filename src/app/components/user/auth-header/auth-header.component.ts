@@ -78,20 +78,28 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Listener para cliques globais no documento
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event): void {
-    const target = event.target as HTMLElement;
-    
-    // Verifica se o clique foi fora do container de busca
-    if (this.isSearchActive && this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
-      this.closeSearch();
-    }
-    
-    // Verifica se o clique foi fora do container de notificações
-    if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
-      this.closeNotificationPanel();
-    }
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: Event): void {
+  const target = event.target as HTMLElement;
+  
+  // Verifica se o clique foi no botão de toggle da pesquisa ou seus elementos filhos
+  const searchToggleButton = target.closest('[data-search-toggle]');
+  const notificationToggleButton = target.closest('[data-notification-toggle]');
+  
+  // Verifica se o clique foi fora do container de busca (e não no botão de toggle)
+  if (this.isSearchActive && this.searchContainer && 
+      !this.searchContainer.nativeElement.contains(target) && 
+      !searchToggleButton) {
+    this.closeSearch();
   }
+  
+  // Verifica se o clique foi fora do container de notificações (e não no botão de toggle)
+  if (this.showNotificationPanel && this.notificationContainer && 
+      !this.notificationContainer.nativeElement.contains(target) && 
+      !notificationToggleButton) {
+    this.closeNotificationPanel();
+  }
+}
 
   // Listener para a tecla ESC
   @HostListener('document:keydown.escape', ['$event'])
@@ -171,23 +179,22 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.closeNotificationPanel();
   }
 
-  // Métodos de Search (atualizados)
   toggleSearch(event: Event): void {
     event.preventDefault();
-    event.stopPropagation(); // Impede a propagação do evento
+    event.stopPropagation();
     
-    // Se já está ativo, fecha; senão abre e fecha outros painéis
     if (this.isSearchActive) {
       this.closeSearch();
     } else {
-      this.closeNotificationPanel(); // Fecha painel de notificações
+      this.closeNotificationPanel();
       this.isSearchActive = true;
       
+      // Delay maior no mobile para garantir renderização
       setTimeout(() => {
         if (this.searchInput) {
           this.searchInput.nativeElement.focus();
         }
-      }, 100);
+      }, this.isMobile ? 250 : 100);
     }
   }
 
@@ -257,12 +264,26 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     localStorage.removeItem('recentSearches');
   }
 
-  // Métodos de Notificação (atualizados)
-  toggleNotificationPanel(event?: Event): void {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation(); // Impede a propagação do evento
+toggleNotificationPanel(event?: Event): void {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  
+  if (this.showNotificationPanel) {
+    this.closeNotificationPanel();
+  } else {
+    this.closeSearch();
+    this.showNotificationPanel = true;
+    
+    if (this.hasUnreadNotifications) {
+      // Pequeno delay antes de marcar como lidas
+      setTimeout(() => {
+        this.markAllNotificationsAsRead();
+      }, this.isMobile ? 100 : 50);
     }
+  }
+
     
     // Se já está ativo, fecha; senão abre e fecha outros painéis
     if (this.showNotificationPanel) {
