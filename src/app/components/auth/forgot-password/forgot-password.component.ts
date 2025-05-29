@@ -4,6 +4,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { environment } from '../../../../environment';
 
 @Component({
   selector: 'app-forgot-password',
@@ -48,7 +49,7 @@ export class ForgotPasswordComponent implements OnDestroy {
       this.subscription.unsubscribe();
     }
     
-    this.subscription = this.http.post('http://localhost:8080/auth/forgot-password', this.form.value, { responseType: 'text' })
+    this.subscription = this.http.post(`${environment.apiUrl}/auth/forgot-password`, this.form.value, { responseType: 'text' })
       .subscribe({
         next: (response) => {
           this.success = 'E-mail enviado com sucesso! Verifique sua caixa de entrada.';

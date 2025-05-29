@@ -3,6 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environment';
 
 @Component({
   selector: 'app-reset-password',
@@ -62,7 +63,7 @@ export class ResetPasswordComponent {
       newPassword: this.form.value.password
     };
 
-    this.http.post('http://localhost:8080/auth/reset-password', body, { responseType: 'text' })
+    this.http.post(`${environment.apiUrl}/auth/reset-password`, body, { responseType: 'text' })
       .subscribe({
         next: (response) => {
           this.success = 'Senha redefinida com sucesso!';
