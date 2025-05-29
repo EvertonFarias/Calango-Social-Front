@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8080', // URL da API do backend
+  apiUrl: 'http://31.97.130.19:8080', 
   firebaseConfig: {
     apiKey: "AIzaSyA8A20CxHF-JPC7Uj--YAU41rdOOM3QBIQ",
     authDomain: "calangosocial-b9713.firebaseapp.com",
