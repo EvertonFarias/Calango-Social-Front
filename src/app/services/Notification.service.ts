@@ -125,6 +125,7 @@ export class NotificationService {
       position: 'top-end',
       timer: 5000,
       showConfirmButton: false,
+      showCloseButton: true,
       customClass: {
         popup: 'notification-toast'
       }
