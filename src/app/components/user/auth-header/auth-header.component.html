@@ -24,18 +24,18 @@
         </a>
       </li>
       
-      <li>
-        <a
-          (click)="isMobile ? toggleSearchMobile() : toggleSearch($event)"
-          [class.active]="isSearchActive" 
-          [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile">
-          
-          <span class="material-symbols-outlined">search</span>
-          <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">
-            Pesquisa
-          </span>
-        </a>
-      </li>
+        <li>
+          <a
+            (click)="isMobile ? toggleSearchMobile() : toggleSearch($event)"
+            [class.active]="isSearchActive" 
+            [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile">
+
+            <span class="material-symbols-outlined">search</span>
+            <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">
+              Pesquisa
+            </span>
+          </a>
+        </li>
       
       <li>
         <a routerLink="user/messages" 
