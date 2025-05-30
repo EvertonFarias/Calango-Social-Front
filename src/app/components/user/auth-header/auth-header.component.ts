@@ -79,14 +79,24 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
  @HostListener('document:click', ['$event'])
 onDocumentClick(event: Event): void {
+  // No mobile, não fecha automaticamente - só com o botão X
+  if (this.isMobile) return;
+  
+  // Ignora cliques imediatamente após toggle (só para desktop)
   if (this.justToggled) return;
   
   const target = event.target as HTMLElement;
   
-  // Para search - no mobile, só fecha com o botão X
-  if (this.isSearchActive && !this.isMobile && this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
+  // Verifica se o clique foi fora do container de busca (só desktop)
+  if (this.isSearchActive && this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
     this.closeSearch();
   }
+  
+  // Verifica se o clique foi fora do container de notificações (só desktop)
+  if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
+    this.closeNotificationPanel();
+  }
+
   
   // Para notifications - funciona normal
   if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
@@ -192,9 +202,11 @@ toggleSearch(event: Event): void {
   event.preventDefault();
   event.stopPropagation();
   
-  // Aumenta o tempo para mobile para evitar conflitos com focus
-  this.justToggled = true;
-  setTimeout(() => this.justToggled = false, this.isMobile ? 800 : 400);
+  // Só usa justToggled no desktop
+  if (!this.isMobile) {
+    this.justToggled = true;
+    setTimeout(() => this.justToggled = false, 400);
+  }
   
   if (this.isSearchActive) {
     this.closeSearch();
@@ -206,7 +218,7 @@ toggleSearch(event: Event): void {
       if (this.searchInput) {
         this.searchInput.nativeElement.focus();
       }
-    }, this.isMobile ? 500 : 100); // Aumenta delay no mobile
+    }, this.isMobile ? 300 : 100);
   }
 }
 
@@ -277,56 +289,56 @@ toggleSearch(event: Event): void {
   }
 
 
-toggleNotificationPanel(event?: Event): void {
-  if (event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-  
-  // Define flag para ignorar próximo clique do document listener
-  this.justToggled = true;
-  setTimeout(() => this.justToggled = false, 400);
-  
-  if (this.showNotificationPanel) {
-    this.closeNotificationPanel();
-  } else {
-    this.closeSearch();
-    this.showNotificationPanel = true;
-    
-    if (this.hasUnreadNotifications) {
-      this.markAllNotificationsAsRead();
-    }
-  }
-
-  
-  if (this.showNotificationPanel) {
-    this.closeNotificationPanel();
-  } else {
-    this.closeSearch();
-    this.showNotificationPanel = true;
-    
-    if (this.hasUnreadNotifications) {
-      // Pequeno delay antes de marcar como lidas
-      setTimeout(() => {
-        this.markAllNotificationsAsRead();
-      }, this.isMobile ? 100 : 50);
-    }
-  }
-
-    
-    // Se já está ativo, fecha; senão abre e fecha outros painéis
-    if (this.showNotificationPanel) {
-      this.closeNotificationPanel();
-    } else {
-      this.closeSearch(); // Fecha painel de busca
-      this.showNotificationPanel = true;
-      
-      if (this.hasUnreadNotifications) {
-        // Marca todas como lidas quando abre o painel
-        this.markAllNotificationsAsRead();
+    toggleNotificationPanel(event?: Event): void {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
       }
-    }
-  }
+      
+      // Define flag para ignorar próximo clique do document listener
+      this.justToggled = true;
+      setTimeout(() => this.justToggled = false, 400);
+      
+      if (this.showNotificationPanel) {
+        this.closeNotificationPanel();
+      } else {
+        this.closeSearch();
+        this.showNotificationPanel = true;
+        
+        if (this.hasUnreadNotifications) {
+          this.markAllNotificationsAsRead();
+        }
+      }
+
+      
+      if (this.showNotificationPanel) {
+        this.closeNotificationPanel();
+      } else {
+        this.closeSearch();
+        this.showNotificationPanel = true;
+        
+        if (this.hasUnreadNotifications) {
+          // Pequeno delay antes de marcar como lidas
+          setTimeout(() => {
+            this.markAllNotificationsAsRead();
+          }, this.isMobile ? 100 : 50);
+        }
+      }
+
+        
+        // Se já está ativo, fecha; senão abre e fecha outros painéis
+        if (this.showNotificationPanel) {
+          this.closeNotificationPanel();
+        } else {
+          this.closeSearch(); // Fecha painel de busca
+          this.showNotificationPanel = true;
+          
+          if (this.hasUnreadNotifications) {
+            // Marca todas como lidas quando abre o painel
+            this.markAllNotificationsAsRead();
+          }
+        }
+      }
 
   closeNotificationPanel(): void {
     this.showNotificationPanel = false;
