@@ -77,21 +77,22 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.checkScreenSize();
   }
 
-  // Listener para cliques globais no documento
-@HostListener('document:click', ['$event'])
+ @HostListener('document:click', ['$event'])
 onDocumentClick(event: Event): void {
-  // Ignora cliques imediatamente após toggle
   if (this.justToggled) return;
   
   const target = event.target as HTMLElement;
   
-  // Verifica se o clique foi fora do container de busca
-  if (this.isSearchActive && this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
-    // No mobile, só fecha se não for um clique no input ou elementos relacionados à busca
-    if (!this.isMobile || !this.isSearchRelatedElement(target)) {
-      this.closeSearch();
-    }
+  // Para search - no mobile, só fecha com o botão X
+  if (this.isSearchActive && !this.isMobile && this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
+    this.closeSearch();
   }
+  
+  // Para notifications - funciona normal
+  if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
+    this.closeNotificationPanel();
+  }
+
   
   // Verifica se o clique foi fora do container de notificações
   if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
