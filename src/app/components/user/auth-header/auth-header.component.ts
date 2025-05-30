@@ -87,13 +87,25 @@ onDocumentClick(event: Event): void {
   
   // Verifica se o clique foi fora do container de busca
   if (this.isSearchActive && this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
-    this.closeSearch();
+    // No mobile, só fecha se não for um clique no input ou elementos relacionados à busca
+    if (!this.isMobile || !this.isSearchRelatedElement(target)) {
+      this.closeSearch();
+    }
   }
   
   // Verifica se o clique foi fora do container de notificações
   if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
     this.closeNotificationPanel();
   }
+}
+
+private isSearchRelatedElement(element: HTMLElement): boolean {
+  // Verifica se o elemento clicado é relacionado à busca
+  return element.closest('.search-panel') !== null ||
+         element.closest('.search-input-container') !== null ||
+         element.classList.contains('search-input') ||
+         element.classList.contains('search-icon') ||
+         element.classList.contains('clear-icon');
 }
 
   // Listener para a tecla ESC
@@ -175,14 +187,13 @@ onDocumentClick(event: Event): void {
   }
 private justToggled = false;
 
-// Modifique o método toggleSearch:
 toggleSearch(event: Event): void {
   event.preventDefault();
   event.stopPropagation();
   
-  // Define flag para ignorar próximo clique do document listener
+  // Aumenta o tempo para mobile para evitar conflitos com focus
   this.justToggled = true;
-  setTimeout(() => this.justToggled = false, 400);
+  setTimeout(() => this.justToggled = false, this.isMobile ? 800 : 400);
   
   if (this.isSearchActive) {
     this.closeSearch();
@@ -194,7 +205,7 @@ toggleSearch(event: Event): void {
       if (this.searchInput) {
         this.searchInput.nativeElement.focus();
       }
-    }, this.isMobile ? 300 : 100);
+    }, this.isMobile ? 500 : 100); // Aumenta delay no mobile
   }
 }
 
