@@ -76,39 +76,32 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   onResize(event: Event): void {
     this.checkScreenSize();
   }
-
- @HostListener('document:click', ['$event'])
+@HostListener('document:click', ['$event'])
 onDocumentClick(event: Event): void {
-  // No mobile, não fecha automaticamente - só com o botão X
-  if (this.isMobile) return;
-  
-  // Ignora cliques imediatamente após toggle (só para desktop)
-  if (this.justToggled) return;
-  
+  // Impede fechamento imediato no mobile após abertura
+  if (this.isMobile) {
+    if (this.justOpenedSearch) return;
+
+    // Impede fechamento se o input estiver focado
+    if (document.activeElement === this.searchInput?.nativeElement) return;
+  }
+
+  // Impede fechamento imediato no desktop após toggle
+  if (!this.isMobile && this.justToggled) return;
+
   const target = event.target as HTMLElement;
-  
-  // Verifica se o clique foi fora do container de busca (só desktop)
+
+  // Fecha busca se clicou fora (apenas desktop)
   if (this.isSearchActive && this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
     this.closeSearch();
   }
-  
-  // Verifica se o clique foi fora do container de notificações (só desktop)
-  if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
-    this.closeNotificationPanel();
-  }
 
-  
-  // Para notifications - funciona normal
-  if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
-    this.closeNotificationPanel();
-  }
-
-  
-  // Verifica se o clique foi fora do container de notificações
+  // Fecha notificações se clicou fora (apenas desktop)
   if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
     this.closeNotificationPanel();
   }
 }
+
 
 private isSearchRelatedElement(element: HTMLElement): boolean {
   // Verifica se o elemento clicado é relacionado à busca
@@ -135,6 +128,7 @@ private isSearchRelatedElement(element: HTMLElement): boolean {
     this.loadRecentSearches();
     this.initializeUser();
     this.initializeNotifications();
+    this.isMobile = window.matchMedia('(pointer: coarse)').matches;
   }
 
   ngAfterViewInit(): void {
@@ -197,23 +191,29 @@ private isSearchRelatedElement(element: HTMLElement): boolean {
     this.closeNotificationPanel();
   }
 private justToggled = false;
+private justOpenedSearch = false;
 
 toggleSearch(event: Event): void {
   event.preventDefault();
   event.stopPropagation();
-  
-  // Só usa justToggled no desktop
+
   if (!this.isMobile) {
     this.justToggled = true;
     setTimeout(() => this.justToggled = false, 400);
   }
-  
+
   if (this.isSearchActive) {
     this.closeSearch();
   } else {
     this.closeNotificationPanel();
     this.isSearchActive = true;
-    
+
+    // Impede fechamento precoce no mobile
+    if (this.isMobile) {
+      this.justOpenedSearch = true;
+      setTimeout(() => this.justOpenedSearch = false, 500);
+    }
+
     setTimeout(() => {
       if (this.searchInput) {
         this.searchInput.nativeElement.focus();
