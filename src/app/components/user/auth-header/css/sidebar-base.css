@@ -789,6 +789,20 @@
   }
 }
 
+@media (max-width: 430px) {
+  .logout-button {
+    margin-right: -2% !important;
+  }
+}
+@media (max-width: 370px) {
+  .logout-button {
+    margin-right: -6% !important;
+  }
+  .profile-picture{
+    margin-left: -50% !important;
+  }
+}
+
 /* Tablet adjustments */
 @media (max-width: 1024px) and (min-width: 769px) {
  .notification-container {
