@@ -192,15 +192,12 @@ private isSearchRelatedElement(element: HTMLElement): boolean {
   }
 private justToggled = false;
 private justOpenedSearch = false;
-
 toggleSearch(event: Event): void {
   event.preventDefault();
   event.stopPropagation();
 
-  if (!this.isMobile) {
-    this.justToggled = true;
-    setTimeout(() => this.justToggled = false, 400);
-  }
+  this.justToggled = true;
+  setTimeout(() => this.justToggled = false, 400);
 
   if (this.isSearchActive) {
     this.closeSearch();
@@ -208,19 +205,29 @@ toggleSearch(event: Event): void {
     this.closeNotificationPanel();
     this.isSearchActive = true;
 
-    // Impede fechamento precoce no mobile
-    if (this.isMobile) {
-      this.justOpenedSearch = true;
-      setTimeout(() => this.justOpenedSearch = false, 500);
-    }
-
     setTimeout(() => {
       if (this.searchInput) {
         this.searchInput.nativeElement.focus();
       }
-    }, this.isMobile ? 300 : 100);
+    }, 100);
   }
 }
+toggleSearchMobile(): void {
+  if (this.isSearchActive) {
+    this.closeSearch();
+  } else {
+    this.closeNotificationPanel();
+    this.isSearchActive = true;
+
+    // Foca depois que o painel abrir
+    setTimeout(() => {
+      if (this.searchInput) {
+        this.searchInput.nativeElement.focus();
+      }
+    }, 300); // tempo maior por animação
+  }
+}
+
 
   closeSearch(): void {
     this.isSearchActive = false;
