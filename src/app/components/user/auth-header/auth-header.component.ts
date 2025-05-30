@@ -219,7 +219,7 @@ toggleSearch(event: Event): void {
   } else {
     this.closeNotificationPanel();
     this.isSearchActive = true;
-
+    console.log('isSearchActive =', this.isSearchActive);
     setTimeout(() => {
       if (this.searchInput) {
         this.searchInput.nativeElement.focus();
