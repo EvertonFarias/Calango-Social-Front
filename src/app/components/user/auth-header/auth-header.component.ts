@@ -82,7 +82,10 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   onDocumentClick(event: Event): void {
     const target = event.target as HTMLElement;
     
-
+    // Verifica se o clique foi fora do container de busca
+    if (this.isSearchActive && this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
+      this.closeSearch();
+    }
     
     // Verifica se o clique foi fora do container de notificações
     if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
@@ -154,13 +157,15 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Método para verificar o tamanho da tela
-  private checkScreenSize(): void {
-    this.isMobile = window.innerWidth <= 768;
-    // Fecha painéis quando muda para mobile para evitar problemas de layout
-    if (this.isMobile) {
-      this.closeAllPanels();
-    }
+private checkScreenSize(): void {
+  const wasMobile = this.isMobile;
+  this.isMobile = window.innerWidth <= 768;
+  
+  // Só fecha painéis se mudou de desktop para mobile, não em mudanças dentro do mobile
+  if (!wasMobile && this.isMobile) {
+    this.closeAllPanels();
   }
+}
 
   // Método para fechar todos os painéis (útil quando clicar em outros ícones)
   private closeAllPanels(): void {
