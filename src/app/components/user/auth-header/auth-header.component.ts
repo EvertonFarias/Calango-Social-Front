@@ -82,10 +82,7 @@ export class AuthHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   onDocumentClick(event: Event): void {
     const target = event.target as HTMLElement;
     
-    // Verifica se o clique foi fora do container de busca
-    if (this.isSearchActive && this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
-      this.closeSearch();
-    }
+
     
     // Verifica se o clique foi fora do container de notificações
     if (this.showNotificationPanel && this.notificationContainer && !this.notificationContainer.nativeElement.contains(target)) {
