@@ -211,20 +211,20 @@ toggleSearch(event: Event): void {
       }
     }, 100);
   }
-}
-toggleSearchMobile(): void {
+}toggleSearchMobile(): void {
+  console.log('Abrindo busca no mobile'); 
+
   if (this.isSearchActive) {
     this.closeSearch();
   } else {
     this.closeNotificationPanel();
     this.isSearchActive = true;
 
-    // Foca depois que o painel abrir
     setTimeout(() => {
       if (this.searchInput) {
         this.searchInput.nativeElement.focus();
       }
-    }, 300); // tempo maior por animação
+    }, 300);
   }
 }
 
