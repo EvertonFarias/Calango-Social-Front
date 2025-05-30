@@ -24,18 +24,14 @@
         </a>
       </li>
       
-        <li>
-          <a
-            (click)="isMobile ? toggleSearchMobile() : toggleSearch($event)"
-            [class.active]="isSearchActive" 
-            [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile">
-
-            <span class="material-symbols-outlined">search</span>
-            <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">
-              Pesquisa
-            </span>
-          </a>
-        </li>
+      <li>
+        <a (click)="toggleSearch($event)" 
+           [class.active]="isSearchActive" 
+           [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile">
+          <span class="material-symbols-outlined">search</span>
+          <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Pesquisa</span>
+        </a>
+      </li>
       
       <li>
         <a routerLink="user/messages" 
@@ -45,10 +41,11 @@
           <span class="menu-text" *ngIf="!isMobile && !isSearchActive && !showNotificationPanel">Mensagens</span>
         </a>
       </li>
+      
       <li>
         <a (click)="toggleNotificationPanel($event)" 
-          [class.active]="showNotificationPanel" 
-          [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile">
+           [class.active]="showNotificationPanel" 
+           [class.icon-only]="(isSearchActive || showNotificationPanel) || isMobile">
           <div class="notification-container">
             <span class="material-symbols-outlined">notifications</span>
             <span *ngIf="hasUnreadNotifications" class="notification-badge">
