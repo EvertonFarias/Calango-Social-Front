@@ -1,5 +1,5 @@
 # CalangoSocial
-**Calango Social** é uma rede social desenvolvida como projeto Fullstack utilizando **Angular**, **Spring Boot** e **PostgreSQL**. A aplicação permite que usuários se conectem, publiquem conteúdos, curtam, comentem e interajam de forma intuitiva — simulando uma rede social moderna.
+**Calango Social** é uma rede social desenvolvida como projeto Fullstack utilizando **Angular**, **Spring Boot** e **PostgreSQL**. A aplicação permite que usuários se conectem, publiquem conteúdos, curtam, comentem e interajam de forma intuitiva, simulando uma rede social moderna.
 
 ---
 
