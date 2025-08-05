@@ -1,59 +1,35 @@
-# InovaTestFront
+# CalangoSocial
+**Calango Social** é uma rede social desenvolvida como projeto Fullstack utilizando **Angular**, **Spring Boot** e **PostgreSQL**. A aplicação permite que usuários se conectem, publiquem conteúdos, curtam, comentem e interajam de forma intuitiva — simulando uma rede social moderna.
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
+---
 
-## Development server
+## 🚀 Funcionalidades
 
-To start a local development server, run:
+-  Autenticação de usuários (login, cadastro, recuperacão de senha e persistência de sessão)
+-  Criação de postagens com imagens, vídeos e descrição
+-  Curtidas e comentários em posts
+-  Perfil do usuário com foto, bio e visualização de atividades
+-  Sistema de amizades (enviar, aceitar, rejeitar solicitações)
+-  Feed com postagens de amigos
+-  Notificações em tempo real (WebSocket)
+-  Upload de imagens e vídeos com Firebase Storage  
+   O backend em Spring Boot recebe o upload, envia a imagem para o Firebase Storage e armazena apenas o path da imagem no banco de dados PostgreSQL.
 
-```bash
-ng serve
-```
+---
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Tecnologias Utilizadas
 
-## Code scaffolding
+### Frontend
+- [Angular](https://angular.io/)
+- Angular Material
+- RxJS
+- Firebase (Storage, Realtime Database e Auth)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Backend
+- [Spring Boot](https://spring.io/projects/spring-boot)
+- Spring Security
+- Spring Data JPA
+- PostgreSQL
+- WebSocket (notificações)
+* Repositório do Backend: https://github.com/EvertonFarias/Rede-Social/tree/main
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
